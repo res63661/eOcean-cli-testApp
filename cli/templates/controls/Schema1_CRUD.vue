@@ -53,7 +53,11 @@ export default {
   },
   methods: {
     updateItem(fieldDef, id, e) {
-      this.$store.dispatch('Schema1/update', { fieldDef, id: id, newValue: e })
+      this.$store.dispatch('{{storeName}}/update', {
+        fieldDef,
+        id: id,
+        newValue: e,
+      })
     },
     rowClick: function (item, row) {
       row.select(true)
@@ -64,11 +68,11 @@ export default {
 
   computed: {
     ...mapGetters({
-      schemaDsiplayDefinition: 'Schema1/schemaDsiplayDefinition',
-      all: 'Schema1/all',
+      schemaDsiplayDefinition: '{{storeName}}/schemaDsiplayDefinition',
+      all: '{{storeName}}/all',
     }),
     comp() {
-      return this.$store.getters['Schema1/schemaDsiplayDefinition']
+      return this.$store.getters['{{storeName}}/schemaDsiplayDefinition']
     },
     headers() {
       if (!this.schemaDsiplayDefinition) {
