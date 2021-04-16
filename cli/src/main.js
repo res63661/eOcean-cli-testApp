@@ -11,6 +11,9 @@ import Listr from 'listr'
 import { projectInstall } from 'pkg-install'
 import Mustache from 'mustache'
 
+var customTags = ['<%', '%>']
+Mustache.tags = customTags
+
 const access = promisify(fs.access)
 const copy = promisify(ncp)
 
@@ -25,7 +28,8 @@ async function templateReplace(options) {
   /**Use template engine to replace keys with relevant data from
    * user selections
    */
-  echo('Options', options)
+  if (options.debug) echo('Options', options)
+
   let template = fs.readFileSync(options.targetStoreFilePath, 'utf-8')
   var rendered = Mustache.render(template, { storeName: options.storeName })
   //echo('template', template)
@@ -72,8 +76,6 @@ async function copyTemplateFiles(options) {
 
   options.targetStoreFilePath = targetPath
 
-  //console.log('\nPathing: ', templatePath, targetPath)
-
   copy(templatePath, targetPath, {
     clobber: false,
   })
@@ -88,8 +90,6 @@ async function copyTemplateFiles(options) {
     options.schemasSubDirectory,
     options.storeName + '.json'
   )
-
-  console.log('\nPathing: ', templatePathSchema, targetPathSchema)
 
   return copy(templatePathSchema, targetPathSchema, {
     clobber: false,

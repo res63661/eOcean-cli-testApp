@@ -45,10 +45,10 @@
 import { mapGetters } from 'vuex'
 
 const TOKENIZED = {
-  ALL: '<%storeName%>/all',
-  UPDATE: '<%storeName%>/update',
-  SCHEMA_DISPLAY_DEFINITION: '<%storeName%>/schemaDsiplayDefinition',
-  STORE_NAME: '<% storeName %>',
+  ALL: 'mystore/all',
+  UPDATE: 'mystore/update',
+  SCHEMA_DISPLAY_DEFINITION: 'mystore/schemaDsiplayDefinition',
+  STORE_NAME: 'mystore',
 }
 
 export default {

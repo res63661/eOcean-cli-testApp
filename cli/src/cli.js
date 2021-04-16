@@ -14,6 +14,7 @@ function parseArgumentsIntoOptions(rawArgs) {
       '-i': '--install',
       '--add:store': Boolean,
       '--name': String,
+      '--debug': Boolean,
     },
     {
       argv: rawArgs.slice(2),
@@ -26,6 +27,7 @@ function parseArgumentsIntoOptions(rawArgs) {
     //runInstall: args['--install'] || false,
     command: args['--add:store'] ? 'add:store' : '',
     storeName: args['--name'] || '',
+    debug: args['--debug'] || false,
   }
 }
 
@@ -88,7 +90,7 @@ export async function cli(args) {
   //options = await promptForMissingOptions(options)
   options = await promptForEOXOptions(options)
 
-  console.log(options)
+  if (options.debug) console.log(options)
 
   //Execute the steps
   //await createProject(options)
