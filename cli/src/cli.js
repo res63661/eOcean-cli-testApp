@@ -1,6 +1,7 @@
 import arg from 'arg'
+//import { create } from 'core-js/core/object'
 import inquirer from 'inquirer'
-import { createProject } from './main'
+import { createProjectII } from './main'
 
 function parseArgumentsIntoOptions(rawArgs) {
   const args = arg(
@@ -11,6 +12,8 @@ function parseArgumentsIntoOptions(rawArgs) {
       '-g': '--git',
       '-y': '--yes',
       '-i': '--install',
+      '--add:store': Boolean,
+      '--name': String,
     },
     {
       argv: rawArgs.slice(2),
@@ -19,8 +22,10 @@ function parseArgumentsIntoOptions(rawArgs) {
   return {
     skipPrompts: args['--yes'] || false,
     git: args['--git'] || false,
-    template: args._[0],
-    runInstall: args['--install'] || false,
+    //template: args._[0],
+    //runInstall: args['--install'] || false,
+    command: args['--add:store'] ? 'add:store' : '',
+    storeName: args['--name'] || '',
   }
 }
 
@@ -61,12 +66,31 @@ async function promptForMissingOptions(options) {
   }
 }
 
+async function promptForEOXOptions(options) {
+  const questions = []
+  questions.push({
+    type: 'input',
+    name: 'storeName',
+    message: 'Enter a name for your store',
+    default: 'generated-store',
+  })
+
+  const answers = await inquirer.prompt(questions)
+  return {
+    ...options,
+  }
+}
+
 export async function cli(args) {
   let options = parseArgumentsIntoOptions(args)
-  options = await promptForMissingOptions(options)
+
+  //Prompt for options.
+  //options = await promptForMissingOptions(options)
+  options = await promptForEOXOptions(options)
 
   console.log(options)
 
   //Execute the steps
-  await createProject(options)
+  //await createProject(options)
+  await createProjectII(options)
 }

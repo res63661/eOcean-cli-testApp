@@ -1,3 +1,6 @@
+/**Adapted from
+ * https://www.twilio.com/blog/how-to-build-a-cli-with-node-js
+ */
 import chalk from 'chalk'
 import fs from 'fs'
 import ncp from 'ncp'
@@ -11,7 +14,18 @@ const copy = promisify(ncp)
 
 async function copyTemplateFiles(options) {
   //console.log('\nOptions: ', options)
-  return copy(options.templateDirectory, options.targetDirectory, {
+  // //   return copy(options.templateDirectory, options.targetDirectory, {
+  // //     clobber: false,
+  // //   })
+  const templatePath = path.join(options.templateDirectory, 'Schema1.js')
+  const targetPath = path.join(
+    options.targetDirectory,
+    options.storeName + '.js'
+  )
+
+  console.log('\nPathing: ', templatePath, targetPath)
+
+  return copy(templatePath, targetPath, {
     clobber: false,
   })
 }
@@ -33,25 +47,48 @@ function fixBadWindowsPathResolveDoubleDir(path) {
   return path
 }
 
-export async function createProject(options) {
+async function createTargetDir(targetDir) {
+  fs.mkdir(targetDir, (err) => {
+    if (err) {
+      return console.error(err)
+    }
+    console.log('Directory created successfully!')
+  })
+}
+
+export async function createProjectII(options) {
   options = {
     ...options,
     targetDirectory: options.targetDirectory || process.cwd(),
+    template: 'store',
   }
 
   const currentFileUrl = import.meta.url
-  const urlPath = new URL(currentFileUrl).pathname
 
+  //Calc actual template directory
   let templateDir = path.resolve(
     new URL(currentFileUrl).pathname,
     '..\\..\\templates',
     options.template.toLowerCase()
   )
 
-  //Lop off erroneous duplication of drive on windows
+  //Calculate target dir.
+  let targetDir = path.resolve(
+    new URL(options.targetDirectory).pathname,
+    'store'
+  )
+
+  //Lop off erroneous duplication of drive on windows from path.resolve()
   templateDir = fixBadWindowsPathResolveDoubleDir(templateDir)
   options.templateDirectory = templateDir
 
+  targetDir = fixBadWindowsPathResolveDoubleDir(targetDir)
+  options.targetDirectory = targetDir
+
+  //Create target dir.
+  await createTargetDir(targetDir)
+
+  //Check access on template file
   try {
     await access(templateDir, fs.constants.R_OK)
   } catch (err) {
@@ -60,12 +97,7 @@ export async function createProject(options) {
     process.exit(1)
   }
 
-  // //   //Copy the templates here.
-  // //   console.log('Copy project files')
-  // //   await copyTemplateFiles(options).catch((err) => console.log(err))
-
-  // //   //Update templates with tokens
-
+  //Enact listr workflows
   const tasks = new Listr([
     {
       title: 'Copy project files',
@@ -79,6 +111,8 @@ export async function createProject(options) {
         }, 3000),
       enabled: () => options.git,
     },
+
+    /**Use the below as ref code to run processes */
     // // {
     // //   title: 'Initialize git',
     // //   task: () => initGit(options),
