@@ -29,9 +29,30 @@ async function templateReplace(options) {
   let template = fs.readFileSync(options.targetStoreFilePath, 'utf-8')
   var rendered = Mustache.render(template, { storeName: options.storeName })
   //echo('template', template)
-  echo('rendered', rendered)
+  //echo('rendered', rendered)
 
   fs.writeFileSync(options.targetStoreFilePath, rendered)
+
+  //Token replace in crud control template.
+  let targetControlsDirResolved = path.join(
+    options.templateControlFilePath,
+    'Schema1_CRUD.vue'
+  )
+  targetControlsDirResolved = fixBadWindowsPathResolveDoubleDir(
+    targetControlsDirResolved
+  )
+
+  //Read the file
+  let crudControlTemplate = fs.readFileSync(targetControlsDirResolved, 'utf-8')
+  //Token replace
+  var crudControlRendered = Mustache.render(crudControlTemplate, {
+    storeName: options.storeName,
+  })
+
+  fs.writeFileSync(
+    path.join(options.targetControlFilePath, options.storeName + '_CRUD.vue'),
+    crudControlRendered
+  )
 }
 
 async function copyTemplateFiles(options) {
@@ -94,12 +115,18 @@ function fixBadWindowsPathResolveDoubleDir(path) {
 
 async function createTargetDir(rootDir, targetDir) {
   //Calculate target dir.
-  let targetDirResolved = path.resolve(new URL(rootDir).pathname, targetDir)
+  let targetDirResolved
+  if (targetDir) {
+    targetDirResolved = path.resolve(new URL(rootDir).pathname, targetDir)
+  } else {
+    targetDirResolved = path.resolve(new URL(rootDir).pathname)
+  }
 
+  //Cleanup windows err from path lib
   targetDirResolved = fixBadWindowsPathResolveDoubleDir(targetDirResolved)
 
   if (fs.existsSync(targetDirResolved)) return
-  fs.mkdir(targetDirResolved, (err) => {
+  fs.mkdir(targetDirResolved, { recursive: true }, (err) => {
     if (err) {
       return console.error(err)
     }
@@ -126,6 +153,22 @@ export async function createProjectII(options) {
     '..\\..\\templates',
     options.template.toLowerCase()
   )
+
+  //Calc template source path for CONTROLS
+  options.templateControlFilePath = path.resolve(
+    new URL(currentFileUrl).pathname,
+    '..\\..\\templates',
+    'controls'
+  )
+
+  //Calc target file path for CONTROLS
+  options.targetControlFilePath = path.resolve(
+    new URL(options.targetDirectory).pathname,
+    'components\\EOGenerated'
+  )
+
+  //Create target path for controls
+  await createTargetDir(options.targetControlFilePath)
 
   //Lop off erroneous duplication of drive on windows from path.resolve()
   templateDir = fixBadWindowsPathResolveDoubleDir(templateDir)
