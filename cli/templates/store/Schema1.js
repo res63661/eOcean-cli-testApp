@@ -1,4 +1,4 @@
-import displayDef from '@/schema1.json'
+import displayDef from '@/store/schemas/schema1.json'
 
 /**This is an implementation of a simple generic store to provide
  * -CRUD

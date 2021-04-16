@@ -12,20 +12,47 @@ import { projectInstall } from 'pkg-install'
 const access = promisify(fs.access)
 const copy = promisify(ncp)
 
+const BASE_STORE_TEMPLATE_FILE_NAME = 'Schema1.js'
+const BASE_SCHEMA_TEMPLATE_FILE_NAME = 'schema1.json'
+
+function echo(title, body) {
+  console.log(`\n${title}: `, body)
+}
+
 async function copyTemplateFiles(options) {
-  //console.log('\nOptions: ', options)
-  // //   return copy(options.templateDirectory, options.targetDirectory, {
-  // //     clobber: false,
-  // //   })
-  const templatePath = path.join(options.templateDirectory, 'Schema1.js')
+  echo('Options', options)
+
+  //Copy store to target folder.
+  const templatePath = path.join(
+    options.templateDirectory,
+    BASE_STORE_TEMPLATE_FILE_NAME
+  )
   const targetPath = path.join(
     options.targetDirectory,
+    options.storeSubDirectory,
     options.storeName + '.js'
   )
 
-  console.log('\nPathing: ', templatePath, targetPath)
+  //console.log('\nPathing: ', templatePath, targetPath)
 
-  return copy(templatePath, targetPath, {
+  copy(templatePath, targetPath, {
+    clobber: false,
+  })
+
+  //Copy form layout schema json to target folder
+  const templatePathSchema = path.join(
+    options.schemaTemplateDir,
+    BASE_SCHEMA_TEMPLATE_FILE_NAME
+  )
+  const targetPathSchema = path.join(
+    options.targetDirectory,
+    options.schemasSubDirectory,
+    options.storeName + '.json'
+  )
+
+  console.log('\nPathing: ', templatePathSchema, targetPathSchema)
+
+  return copy(templatePathSchema, targetPathSchema, {
     clobber: false,
   })
 }
@@ -47,8 +74,14 @@ function fixBadWindowsPathResolveDoubleDir(path) {
   return path
 }
 
-async function createTargetDir(targetDir) {
-  fs.mkdir(targetDir, (err) => {
+async function createTargetDir(rootDir, targetDir) {
+  //Calculate target dir.
+  let targetDirResolved = path.resolve(new URL(rootDir).pathname, targetDir)
+
+  targetDirResolved = fixBadWindowsPathResolveDoubleDir(targetDirResolved)
+
+  if (fs.existsSync(targetDirResolved)) return
+  fs.mkdir(targetDirResolved, (err) => {
     if (err) {
       return console.error(err)
     }
@@ -61,6 +94,10 @@ export async function createProjectII(options) {
     ...options,
     targetDirectory: options.targetDirectory || process.cwd(),
     template: 'store',
+    storeSubDirectory: 'store',
+    schemasSubDirectory: 'store/schemas',
+    storeTemplateDir: '',
+    schemaTemplateDir: '',
   }
 
   const currentFileUrl = import.meta.url
@@ -72,21 +109,30 @@ export async function createProjectII(options) {
     options.template.toLowerCase()
   )
 
-  //Calculate target dir.
-  let targetDir = path.resolve(
-    new URL(options.targetDirectory).pathname,
-    'store'
-  )
-
   //Lop off erroneous duplication of drive on windows from path.resolve()
   templateDir = fixBadWindowsPathResolveDoubleDir(templateDir)
-  options.templateDirectory = templateDir
+  options.templateDirectory = templateDir //TODO factor this out
+  options.storeTemplateDir = templateDir
 
-  targetDir = fixBadWindowsPathResolveDoubleDir(targetDir)
-  options.targetDirectory = targetDir
+  //Build
+  options.schemaTemplateDir =
+    //Calc actual template directory
+    path.resolve(
+      new URL(currentFileUrl).pathname,
+      '..\\..\\templates',
+      'schema'
+    )
 
-  //Create target dir.
-  await createTargetDir(targetDir)
+  //Lop off erroneous duplication of drive on windows from path.resolve()
+  options.schemaTemplateDir = fixBadWindowsPathResolveDoubleDir(
+    options.schemaTemplateDir
+  )
+
+  //Create target dir for store.
+  await createTargetDir(options.targetDirectory, 'store')
+
+  //Create target dir for form schemas.
+  await createTargetDir(options.targetDirectory, options.schemasSubDirectory)
 
   //Check access on template file
   try {
@@ -101,7 +147,7 @@ export async function createProjectII(options) {
   const tasks = new Listr([
     {
       title: 'Copy project files',
-      task: () => copyTemplateFiles(options),
+      task: () => copyTemplateFiles(options).catch((err) => console.log(err)),
     },
     {
       title: 'Update stuff',

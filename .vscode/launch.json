@@ -11,7 +11,20 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\genMain.js"
+            "program": "${workspaceFolder}\\cli/.bin/create-project",
+            "args": ["--add:store","--name mystor"]
+        },
+        {
+                "name": "Launch via NPM",
+                "type": "node",
+                "request": "launch",
+                "cwd": "${workspaceRoot}\\cli\\bin",
+                "runtimeExecutable": "create-project",
+                "runtimeArgs": [
+                    "--add:store",
+                    "--name mystor"
+                ],
+                "port": 5858
         }
     ]
 }
