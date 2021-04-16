@@ -9,6 +9,8 @@ import { promisify } from 'util'
 import execa from 'execa'
 import Listr from 'listr'
 import { projectInstall } from 'pkg-install'
+import Mustache from 'mustache'
+
 const access = promisify(fs.access)
 const copy = promisify(ncp)
 
@@ -19,19 +21,35 @@ function echo(title, body) {
   console.log(`\n${title}: `, body)
 }
 
-async function copyTemplateFiles(options) {
+async function templateReplace(options) {
+  /**Use template engine to replace keys with relevant data from
+   * user selections
+   */
   echo('Options', options)
+  let template = fs.readFileSync(options.targetStoreFilePath, 'utf-8')
+  var rendered = Mustache.render(template, { storeName: options.storeName })
+  //echo('template', template)
+  echo('rendered', rendered)
+
+  fs.writeFileSync(options.targetStoreFilePath, rendered)
+}
+
+async function copyTemplateFiles(options) {
+  //echo('Options', options)
 
   //Copy store to target folder.
   const templatePath = path.join(
     options.templateDirectory,
     BASE_STORE_TEMPLATE_FILE_NAME
   )
+
   const targetPath = path.join(
     options.targetDirectory,
     options.storeSubDirectory,
     options.storeName + '.js'
   )
+
+  options.targetStoreFilePath = targetPath
 
   //console.log('\nPathing: ', templatePath, targetPath)
 
@@ -148,6 +166,10 @@ export async function createProjectII(options) {
     {
       title: 'Copy project files',
       task: () => copyTemplateFiles(options).catch((err) => console.log(err)),
+    },
+    {
+      title: 'Apply template replacement',
+      task: () => templateReplace(options).catch((err) => console.log(err)),
     },
     {
       title: 'Update stuff',
