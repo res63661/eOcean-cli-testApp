@@ -1,5 +1,15 @@
 import displayDef from '@/schema1.json'
 
+/**This is an implementation of a simple generic store to provide
+ * -CRUD
+ * -get all
+ * -search
+ *
+ * for a single dto (Schema1 in this case).
+ * A test data json file is used to spoof a database for now but this would be
+ * easily replaced by a mongo api/db.
+ */
+
 export const state = () => ({
   all: [
     {
