@@ -3,15 +3,27 @@ import fs from 'fs'
 import ncp from 'ncp'
 import path from 'path'
 import { promisify } from 'util'
-
+import execa from 'execa'
+import Listr from 'listr'
+import { projectInstall } from 'pkg-install'
 const access = promisify(fs.access)
 const copy = promisify(ncp)
 
 async function copyTemplateFiles(options) {
-  console.log('\nOptions: ', options)
+  //console.log('\nOptions: ', options)
   return copy(options.templateDirectory, options.targetDirectory, {
     clobber: false,
   })
+}
+
+async function initGit(options) {
+  const result = await execa('git', ['init'], {
+    cwd: options.targetDirectory,
+  })
+  if (result.failed) {
+    return Promise.reject(new Error('Failed to initialize git'))
+  }
+  return
 }
 
 function fixBadWindowsPathResolveDoubleDir(path) {
@@ -41,30 +53,6 @@ export async function createProject(options) {
   options.templateDirectory = templateDir
 
   try {
-    console.log('Template dir:', templateDir)
-    console.log('Current file url:', currentFileUrl)
-    console.log(' url:', urlPath)
-    console.log(
-      'Resolve Current file url:',
-      path.resolve(
-        currentFileUrl,
-        '..\\..\\templates',
-        options.template.toLowerCase()
-      )
-    )
-    console.log('__dirname', __dirname)
-
-    const url = require('url')
-    console.log('\nurl.fileURLToPath: ', url.pathToFileURL(urlPath))
-    //url.pathToFileURL(path)
-
-    console.log('\nSubstr: ', templateDir.substr(0, 3))
-    console.log('\nSubstr: ', templateDir.substr(3, 3))
-    if (templateDir.substr(0, 3) === templateDir.substr(3, 3)) {
-      templateDir = templateDir.substr(3, templateDir.length - 3)
-    }
-    console.log('\nNew TemplateDir: ', templateDir)
-
     await access(templateDir, fs.constants.R_OK)
   } catch (err) {
     console.error('%s Invalid template name', chalk.red.bold('ERROR'))
@@ -72,8 +60,44 @@ export async function createProject(options) {
     process.exit(1)
   }
 
-  console.log('Copy project files')
-  await copyTemplateFiles(options).catch((err) => console.log(err))
+  // //   //Copy the templates here.
+  // //   console.log('Copy project files')
+  // //   await copyTemplateFiles(options).catch((err) => console.log(err))
+
+  // //   //Update templates with tokens
+
+  const tasks = new Listr([
+    {
+      title: 'Copy project files',
+      task: () => copyTemplateFiles(options),
+    },
+    {
+      title: 'Update stuff',
+      task: () =>
+        setTimeout(() => {
+          console.log('%s Doing stuff...', chalk.blue.bold('DONE'))
+        }, 3000),
+      enabled: () => options.git,
+    },
+    // // {
+    // //   title: 'Initialize git',
+    // //   task: () => initGit(options),
+    // //   enabled: () => options.git,
+    // // },
+    // // {
+    // //   title: 'Install dependencies',
+    // //   task: () =>
+    // //     projectInstall({
+    // //       cwd: options.targetDirectory,
+    // //     }),
+    // //   skip: () =>
+    // //     !options.runInstall
+    // //       ? 'Pass --install to automatically install dependencies'
+    // //       : undefined,
+    // // },
+  ])
+
+  await tasks.run()
 
   console.log('%s Project ready', chalk.green.bold('DONE'))
   return true
