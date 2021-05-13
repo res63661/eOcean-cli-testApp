@@ -32,15 +32,23 @@ export const getters = {
 
 export const actions = {
   update(ctx, data) {
-    //FInd data in all by id then update.
-    const hits = ctx.state.all.filter((f) => f.id == data.id);
-    if (!hits)
-      throw `Error: found 0 hits in all data collection for id (${data.id})`;
-    if (hits.length > 1)
-      throw `Error: found multiple id's in all data collection for id (${data.id})`;
+    const updateLevel0 = (ctx, data) => {
+      //FInd data in all by id then update.
+      const hits = ctx.state.all.filter((f) => f.id == data.id);
+      if (!hits)
+        throw `Error: found 0 hits in all data collection for id (${data.id})`;
+      if (hits.length > 1)
+        throw `Error: found multiple id's in all data collection for id (${data.id})`;
 
-    //Update data in all data for hit and fire mutation
-    ctx.commit("update", { dataToUpdate: hits[0], newData: data });
+      //Update data in all data for hit and fire mutation
+      ctx.commit("update", { dataToUpdate: hits[0], newData: data });
+    };
+
+    if (!data.parentFieldName) {
+      updateLevel0(ctx, data);
+    } else {
+      ctx.commit("updateNestedChild", data);
+    }
   },
   
 };
@@ -50,6 +58,37 @@ export const mutations = {
     (state.schemaDisplayDefinition = value),
   update(state, data) {
     data.dataToUpdate[data.newData.fieldDef.fieldName] = data.newData.newValue;
+  },
+  updateNestedChild(state, data) {
+    const updateLevelN = (state, data) => {
+      const levels = data.parentFieldName.split("/");
+      let currentObject = state.all;
+      let root;
+      for (let n = 0; n < levels.length; n++) {
+        const levelToken = levels[n];
+
+        /**Using level token
+         * -if numeric then construe as an index lookup on current object
+         * -if not numeric then construe as a property name on current object
+         */
+        //If we're at end of list then use this final token as setter
+        if (n == levels.length - 1) {
+          currentObject[levelToken] = data.newValue;
+        } else {
+          if (!isNaN(levelToken)) {
+            //Is numeric so do lookup on current object id using levelToken as id.
+            const hit = currentObject.find((o) => o.id == levelToken);
+            if (hit) {
+              currentObject = hit;
+            }
+          } else {
+            currentObject = currentObject[levelToken];
+          }
+        }
+      }
+    };
+
+    updateLevelN(state, data);
   },
   add(state, text) {
     all.list.push({
