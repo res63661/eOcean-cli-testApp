@@ -1,0 +1,13 @@
+[
+  {
+    "fieldName": "firstName",
+    "type": "textField",
+    "label": "First Name"
+  },
+  {
+    "fieldName": "favColor",
+    "type": "ddl",
+    "label": "Favorite Color",
+    "ddlList": ["Red", "Orange", "Blue"]
+  }
+]

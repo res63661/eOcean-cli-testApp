@@ -1,0 +1,139 @@
+{
+  "projectName": "Ajenda",
+  "pages": [
+    {
+      "name": "PMeetingSeries",
+      "description": "Shows a navigable view of meetings in a meeting series",
+      "primaryStoreName": "SMeetingSeries",
+      "mappedGetters": [
+        {
+          "storeName": "SMeetingSeries",
+          "propertyName": "all"
+        }
+      ]
+    }
+  ],
+  "controls": [
+    {
+      "name": "CMeetingMetaCard"
+    }
+  ],
+  "stores": [
+    {
+      "name": "SMeetingSeries",
+      "description": "A meeting series contains all meeting objects for a defined 'series'",
+      "actions": [
+        {
+          "name": "advanceMeetingPlayhead",
+          "description": "moves meeting playhead fwd one meeting"
+        }
+      ],
+      "properties": [
+        {
+          "name": "selectedMeetingSeries",
+          "description": "Currently selected meetingSeries from all",
+          "defaultValue": "eOcean Data"
+        },
+        {
+          "name": "selectedMeeting",
+          "description": "Currently selected meeting from the selectedMeetingSeries",
+          "defaultValue": "eOcean Data",
+          "actions": ["update", "delete"]
+        },
+        {
+          "name": "all",
+          "description": "Array of all meetingSeries objects for the org",
+          "defaultValue": [
+            {
+              "id": 1,
+              "meetingName": "System X Scrum",
+              "frequency": "every weekday",
+              "required": [
+                { "email": "kcarlson@rascrane.com", "name": "Kurt" },
+                { "email": "richard@eoceandata.com", "name": "Richard" }
+              ],
+              "meetings": [
+                {
+                  "dateOfMeeting": "1/1/2021",
+                  "actionItems": [
+                    {
+                      "who": "Kurt",
+                      "what": "get Rich access",
+                      "dueBy": "5/5/2021"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "meetingName": "Weekly",
+              "frequency": "every Tuesday",
+              "required": [
+                { "email": "jsmith@estringsoftware.com", "name": "John Smith" },
+                {
+                  "email": "richard@eoceandata.com",
+                  "name": "Richard Strickland"
+                }
+              ],
+              "meetings": [
+                {
+                  "dateOfMeeting": "1/5/2021",
+                  "actionItems": [
+                    {
+                      "who": "Rich",
+                      "what": "build an app",
+                      "dueBy": "3/5/2021"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "displaySchemas": [
+        [
+          {
+            "fieldName": "id",
+            "type": "label",
+            "label": "id"
+          },
+          {
+            "fieldName": "meetingName",
+            "type": "textField",
+            "label": "Meeting Name"
+          },
+          {
+            "fieldName": "frequency",
+            "type": "ddl",
+            "label": "Frequency",
+            "ddlList": ["Every Weekday", "Every Day", "Custom"]
+          },
+          {
+            "fieldName": "required",
+            "type": "textField"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "SOrg",
+      "description": "all org data",
+      "properties": [
+        {
+          "name": "all",
+          "description": "All orgs we are tracking",
+          "defaultValue": [
+            {
+              "orgName": "BkTek"
+            },
+            {
+              "orgName": "TRex"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
