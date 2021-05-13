@@ -49,11 +49,16 @@
               "meetingName": "System X Scrum",
               "frequency": "every weekday",
               "required": [
-                { "email": "kcarlson@rascrane.com", "name": "Kurt" },
-                { "email": "richard@eoceandata.com", "name": "Richard" }
+                { "id": 3, "email": "kcarlson@rascrane.com", "name": "Kurt" },
+                {
+                  "id": 4,
+                  "email": "richard@eoceandata.com",
+                  "name": "Richard"
+                }
               ],
               "meetings": [
                 {
+                  "id": 1,
                   "dateOfMeeting": "1/1/2021",
                   "actionItems": [
                     {
@@ -70,8 +75,13 @@
               "meetingName": "Weekly",
               "frequency": "every Tuesday",
               "required": [
-                { "email": "jsmith@estringsoftware.com", "name": "John Smith" },
                 {
+                  "id": 1,
+                  "email": "jsmith@estringsoftware.com",
+                  "name": "John Smith"
+                },
+                {
+                  "id": 2,
                   "email": "richard@eoceandata.com",
                   "name": "Richard Strickland"
                 }
@@ -112,6 +122,10 @@
           },
           {
             "fieldName": "required",
+            "type": "textField"
+          },
+          {
+            "fieldName": "meetings",
             "type": "textField"
           }
         ]

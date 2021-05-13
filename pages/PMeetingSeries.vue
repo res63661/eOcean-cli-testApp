@@ -31,9 +31,7 @@
               <v-col>
                 <p>What does PMeetingSeries do?</p>
               </v-col>
-              <v-col>
-                Shows a navigable view of meetings in a meeting series
-              </v-col>
+              <v-col> Shows a navigable view of meetings in a meeting series </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions>
@@ -183,14 +181,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import Logo from "~/components/Logo.vue";
+import VuetifyLogo from "~/components/VuetifyLogo.vue";
 
 const TOKENIZED = {
-  PAGE_NAME: 'PMeetingSeries',
-}
+  PAGE_NAME: "PMeetingSeries",
+};
 
 export default {
   components: {
@@ -199,22 +197,22 @@ export default {
   },
   computed: {
     schemaDisplayDefinition() {
-      return this.$store.getters['SMeetingSeries/schemaDisplayDefinition']
+      return this.$store.getters["SMeetingSeries/schemaDisplayDefinition"];
     },
     headers() {
       if (!this.schemaDisplayDefinition) {
-        return []
+        return [];
       }
 
       return this.schemaDisplayDefinition.map((col) => {
         return {
           text: col.fieldName,
           value: col.fieldName,
-        }
-      })
+        };
+      });
     },
 
-    ...mapGetters({ all: 'SMeetingSeries/all' }),
+    ...mapGetters({all: 'SMeetingSeries/all'}),
   },
   props: {
     light: {
@@ -224,33 +222,34 @@ export default {
   },
   methods: {
     formatArrayCellDescription(selectedItem, item) {
-      if (!selectedItem) return ''
-      if (!item) return ''
+      if (!selectedItem) return "";
+      if (!item) return "";
 
-      return selectedItem[item.fieldName]
+      return selectedItem[item.fieldName];
     },
+
     computeArrayId(item, selectedItem) {
-      return (selectedItem ? selectedItem.id : 'noId') + item.fieldName
+      return (selectedItem ? selectedItem.id : "noId") + item.fieldName;
     },
     formatCell(value) {
-      console.log(value)
+      console.log(value);
       if (Array.isArray(value)) {
-        return `Array: length(${value.length})`
+        return `Array: length(${value.length})`;
       }
 
-      return value
+      return value;
     },
     updateItem(fieldDef, id, e) {
-      this.$store.dispatch('SMeetingSeries/update', {
+      this.$store.dispatch("SMeetingSeries/update", {
         fieldDef,
         id: id,
         newValue: e,
-      })
+      });
     },
     rowClick: function (item, row) {
-      row.select(true)
-      this.selectedId = item.id
-      this.selectedItem = item
+      row.select(true);
+      this.selectedId = item.id;
+      this.selectedItem = item;
     },
   },
 
@@ -261,9 +260,9 @@ export default {
       pageName: TOKENIZED.PAGE_NAME,
       selectedItem: null,
       selectedId: null,
-    }
+    };
   },
-}
+};
 </script>
 
 

@@ -22,7 +22,7 @@ export const state = () => ({
   schemaDisplayDefinition: displayDef,
   selectedMeetingSeries: "eOcean Data", //Currently selected meetingSeries from all
 selectedMeeting: "eOcean Data", //Currently selected meeting from the selectedMeetingSeries
-all: [{"id":1,"meetingName":"System X Scrum","frequency":"every weekday","required":[{"email":"kcarlson@rascrane.com","name":"Kurt"},{"email":"richard@eoceandata.com","name":"Richard"}],"meetings":[{"dateOfMeeting":"1/1/2021","actionItems":[{"who":"Kurt","what":"get Rich access","dueBy":"5/5/2021"}]}]},{"id":2,"meetingName":"Weekly","frequency":"every Tuesday","required":[{"email":"jsmith@estringsoftware.com","name":"John Smith"},{"email":"richard@eoceandata.com","name":"Richard Strickland"}],"meetings":[{"dateOfMeeting":"1/5/2021","actionItems":[{"who":"Rich","what":"build an app","dueBy":"3/5/2021"}]}]}], //Array of all meetingSeries objects for the org
+all: [{"id":1,"meetingName":"System X Scrum","frequency":"every weekday","required":[{"id":3,"email":"kcarlson@rascrane.com","name":"Kurt"},{"id":4,"email":"richard@eoceandata.com","name":"Richard"}],"meetings":[{"id":1,"dateOfMeeting":"1/1/2021","actionItems":[{"who":"Kurt","what":"get Rich access","dueBy":"5/5/2021"}]}]},{"id":2,"meetingName":"Weekly","frequency":"every Tuesday","required":[{"id":1,"email":"jsmith@estringsoftware.com","name":"John Smith"},{"id":2,"email":"richard@eoceandata.com","name":"Richard Strickland"}],"meetings":[{"dateOfMeeting":"1/5/2021","actionItems":[{"who":"Rich","what":"build an app","dueBy":"3/5/2021"}]}]}], //Array of all meetingSeries objects for the org
 
 });
 
