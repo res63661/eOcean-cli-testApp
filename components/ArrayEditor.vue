@@ -9,9 +9,13 @@
           <br />
           Selected id : {{ selectedId }}
           <br />
+          Selected iten : {{ selectedItem }}
+          <br />
           All: {{ all }}
           <br />
           Headers: {{ computeHeaders }}
+          <br />
+          Parent filed name: {{ parentFieldName }}
           <div class="masterList">
             <v-container>
               <v-row>
@@ -49,19 +53,17 @@
 
           <div class="selectedItem">
             <v-container>
-              <v-row v-for="item in selectedItem" :key="item.fieldName">
+              ComputeKeys: {{ computeKeys(selectedItem) }}
+              <v-row v-for="item in computeKeys(selectedItem)" :key="item">
                 <v-col>
                   <v-row>
-                    <v-col> {{ item.fieldName }} </v-col>
+                    <v-col> {{ item }} </v-col>
                     <v-col
-                      v-if="
-                        selectedItem &&
-                        !Array.isArray(selectedItem[item.fieldName])
-                      "
+                      v-if="selectedItem && !Array.isArray(selectedItem[item])"
                     >
                       <v-text-field
                         v-if="selectedItem"
-                        :value="selectedItem[item.fieldName]"
+                        :value="selectedItem[item]"
                         @input="updateItem(item, selectedItem.id, $event)"
                         label="Regular"
                         clearable
@@ -94,8 +96,12 @@
                     >
                       <v-col class="tile blue ma-2 rounded elevation-12">
                         <ArrayEditor
+                          :all="selectedItem[item.fieldName]"
                           v-if="selectedItem"
                           :value="selectedItem[item.fieldName]"
+                          :parentFieldName="
+                            computeParentFieldName(selectedItem)
+                          "
                         ></ArrayEditor>
                       </v-col>
                     </v-row>
@@ -136,6 +142,10 @@
 </template>
 
 <script>
+const TOKENIZED = {
+  STORE_NAME: 'SMeetingSeries',
+}
+
 export default {
   computed: {
     computeHeaders() {
@@ -152,6 +162,22 @@ export default {
     },
   },
   methods: {
+    computeParentFieldName(selectedItem) {
+      //Return the combination of my parentfield name and current id.
+      return `${this.parentFieldName}/${selectedItem['id']}`
+    },
+    updateItem(fieldDef, id, e) {
+      this.$store.dispatch(`${TOKENIZED.STORE_NAME}/update`, {
+        fieldDef,
+        id: id,
+        newValue: e,
+        parentFieldName: `${this.parentFieldName}/${id}/${fieldDef}`,
+      })
+    },
+    computeKeys(item) {
+      if (!item) return []
+      return Object.keys(item)
+    },
     formatCell(value) {
       console.log(value)
       if (Array.isArray(value)) {
@@ -167,6 +193,10 @@ export default {
     },
   },
   props: {
+    parentFieldName: {
+      type: String,
+      default: null,
+    },
     all: {
       type: Array,
       default: () => [],

@@ -16,57 +16,131 @@
  * easily replaced by a mongo api/db.
  */
 
-import displayDef from "@/store/display-schemas/SMeetingSeries.json";
+import displayDef from '@/store/display-schemas/SMeetingSeries.json'
 
 export const state = () => ({
   schemaDisplayDefinition: displayDef,
-  selectedMeetingSeries: "eOcean Data", //Currently selected meetingSeries from all
-selectedMeeting: "eOcean Data", //Currently selected meeting from the selectedMeetingSeries
-all: [{"id":1,"meetingName":"System X Scrum","frequency":"every weekday","required":[{"id":3,"email":"kcarlson@rascrane.com","name":"Kurt"},{"id":4,"email":"richard@eoceandata.com","name":"Richard"}],"meetings":[{"id":1,"dateOfMeeting":"1/1/2021","actionItems":[{"who":"Kurt","what":"get Rich access","dueBy":"5/5/2021"}]}]},{"id":2,"meetingName":"Weekly","frequency":"every Tuesday","required":[{"id":1,"email":"jsmith@estringsoftware.com","name":"John Smith"},{"id":2,"email":"richard@eoceandata.com","name":"Richard Strickland"}],"meetings":[{"dateOfMeeting":"1/5/2021","actionItems":[{"who":"Rich","what":"build an app","dueBy":"3/5/2021"}]}]}], //Array of all meetingSeries objects for the org
-
-});
+  selectedMeetingSeries: 'eOcean Data', //Currently selected meetingSeries from all
+  selectedMeeting: 'eOcean Data', //Currently selected meeting from the selectedMeetingSeries
+  all: [
+    {
+      id: 1,
+      meetingName: 'System X Scrum',
+      frequency: 'every weekday',
+      required: [
+        { id: 3, email: 'kcarlson@rascrane.com', name: 'Kurt' },
+        { id: 4, email: 'richard@eoceandata.com', name: 'Richard' },
+      ],
+      meetings: [
+        {
+          id: 1,
+          dateOfMeeting: '1/1/2021',
+          actionItems: [
+            { who: 'Kurt', what: 'get Rich access', dueBy: '5/5/2021' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 2,
+      meetingName: 'Weekly',
+      frequency: 'every Tuesday',
+      required: [
+        { id: 1, email: 'jsmith@estringsoftware.com', name: 'John Smith' },
+        { id: 2, email: 'richard@eoceandata.com', name: 'Richard Strickland' },
+      ],
+      meetings: [
+        {
+          dateOfMeeting: '1/5/2021',
+          actionItems: [
+            { who: 'Rich', what: 'build an app', dueBy: '3/5/2021' },
+          ],
+        },
+      ],
+    },
+  ], //Array of all meetingSeries objects for the org
+})
 
 export const getters = {
   schemaDisplayDefinition: (state) => state.schemaDisplayDefinition,
   selectedMeetingSeries: (state) => state.selectedMeetingSeries, //Currently selected meetingSeries from all
-selectedMeeting: (state) => state.selectedMeeting, //Currently selected meeting from the selectedMeetingSeries
-all: (state) => state.all, //Array of all meetingSeries objects for the org
-
-};
+  selectedMeeting: (state) => state.selectedMeeting, //Currently selected meeting from the selectedMeetingSeries
+  all: (state) => state.all, //Array of all meetingSeries objects for the org
+}
 
 export const actions = {
   update(ctx, data) {
-    //FInd data in all by id then update.
-    const hits = ctx.state.all.filter((f) => f.id == data.id);
-    if (!hits)
-      throw `Error: found 0 hits in all data collection for id (${data.id})`;
-    if (hits.length > 1)
-      throw `Error: found multiple id's in all data collection for id (${data.id})`;
+    const updateLevel0 = (ctx, data) => {
+      //FInd data in all by id then update.
+      const hits = ctx.state.all.filter((f) => f.id == data.id)
+      if (!hits)
+        throw `Error: found 0 hits in all data collection for id (${data.id})`
+      if (hits.length > 1)
+        throw `Error: found multiple id's in all data collection for id (${data.id})`
 
-    //Update data in all data for hit and fire mutation
-    ctx.commit("update", { dataToUpdate: hits[0], newData: data });
+      //Update data in all data for hit and fire mutation
+      ctx.commit('update', { dataToUpdate: hits[0], newData: data })
+    }
+
+    if (!data.parentFieldName) {
+      updateLevel0(ctx, data)
+    } else {
+      ctx.commit('updateNestedChild', data)
+    }
   },
   /*moves meeting playhead fwd one meeting*/
-advanceMeetingPlayhead: (ctx, value) => {}
-};
+  advanceMeetingPlayhead: (ctx, value) => {},
+}
 
 export const mutations = {
   schemaDisplayDefinition: (state, value) =>
     (state.schemaDisplayDefinition = value),
   update(state, data) {
-    data.dataToUpdate[data.newData.fieldDef.fieldName] = data.newData.newValue;
+    data.dataToUpdate[data.newData.fieldDef.fieldName] = data.newData.newValue
+  },
+
+  updateNestedChild(state, data) {
+    const updateLevelN = (state, data) => {
+      const levels = data.parentFieldName.split('/')
+      let currentObject = state.all
+      let root
+      for (let n = 0; n < levels.length; n++) {
+        const levelToken = levels[n]
+
+        /**Using level token
+         * -if numeric then construe as an index lookup on current object
+         * -if not numeric then construe as a property name on current object
+         */
+        //If we're at end of list then use this final token as setter
+        if (n == levels.length - 1) {
+          currentObject[levelToken] = data.newValue
+        } else {
+          if (!isNaN(levelToken)) {
+            //Is numeric so do lookup on current object id using levelToken as id.
+            const hit = currentObject.find((o) => o.id == levelToken)
+            if (hit) {
+              currentObject = hit
+            }
+          } else {
+            currentObject = currentObject[levelToken]
+          }
+        }
+      }
+    }
+
+    updateLevelN(state, data)
   },
   add(state, text) {
     all.list.push({
       text,
       done: false,
-    });
+    })
   },
   remove(state, { todo }) {
-    all.list.splice(state.list.indexOf(todo), 1);
+    all.list.splice(state.list.indexOf(todo), 1)
   },
-  selectedMeetingSeries: (state, value) => state.selectedMeetingSeries=value, //Currently selected meetingSeries from all
-selectedMeeting: (state, value) => state.selectedMeeting=value, //Currently selected meeting from the selectedMeetingSeries
-all: (state, value) => state.all=value, //Array of all meetingSeries objects for the org
-
-};
+  selectedMeetingSeries: (state, value) =>
+    (state.selectedMeetingSeries = value), //Currently selected meetingSeries from all
+  selectedMeeting: (state, value) => (state.selectedMeeting = value), //Currently selected meeting from the selectedMeetingSeries
+  all: (state, value) => (state.all = value), //Array of all meetingSeries objects for the org
+}
