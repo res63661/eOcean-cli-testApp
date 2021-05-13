@@ -31,7 +31,9 @@
               <v-col>
                 <p>What does PMeetingSeries do?</p>
               </v-col>
-              <v-col> Shows a navigable view of meetings in a meeting series </v-col>
+              <v-col>
+                Shows a navigable view of meetings in a meeting series
+              </v-col>
             </v-row>
           </v-card-text>
           <v-card-actions>
@@ -61,7 +63,24 @@
                     @click:row="rowClick"
                     item-key="id"
                     single-select
-                  ></v-data-table>
+                  >
+                    <template v-slot:top>
+                      <v-text-field
+                        class="mx-4"
+                        prepend-icon="mdi-magnify"
+                        label="Search table"
+                        v-model="search"
+                      ></v-text-field>
+                    </template>
+
+                    <!-- This template looks for headers with formatters and executes them -->
+                    <template
+                      v-for="header in headers"
+                      v-slot:[`item.${header.value}`]="{ header, value }"
+                    >
+                      {{ formatCell(value) }}
+                    </template>
+                  </v-data-table>
                 </v-col>
               </v-row>
             </v-container>
@@ -73,16 +92,69 @@
                 v-for="item in schemaDisplayDefinition"
                 :key="item.fieldName"
               >
-                <v-col>{{ item.fieldName }}</v-col>
                 <v-col>
-                  <v-text-field
-                    v-if="selectedItem"
-                    :value="selectedItem[item.fieldName]"
-                    @input="updateItem(item, selectedItem.id, $event)"
-                    label="Regular"
-                    clearable
-                  ></v-text-field
-                ></v-col>
+                  <v-row>
+                    <v-col> header </v-col>
+                    <v-col
+                      v-if="
+                        selectedItem &&
+                        !Array.isArray(selectedItem[item.fieldName])
+                      "
+                    >
+                      non array data
+                    </v-col>
+                    <v-col v-else>
+                      <v-row>
+                        <v-col> array data </v-col>
+                        <v-col cols="2">
+                          <v-switch
+                            v-model="
+                              arrayEditToggle[
+                                computeArrayId(item, selectedItem)
+                              ]
+                            "
+                            >Edit</v-switch
+                          >
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                  <v-row
+                    v-if="
+                      selectedItem &&
+                      Array.isArray(selectedItem[item.fieldName])
+                    "
+                  >
+                    <v-col class="tile blue ma-2 rounded elevation-12">
+                      Array header
+                    </v-col>
+                  </v-row>
+                  <!--<v-row>
+                    <v-col>{{ item.fieldName }}</v-col>
+                   <v-col
+                      v-if="
+                        selectedItem &&
+                        !Array.isArray(selectedItem[item.fieldName])
+                      "
+                    >
+                      <v-text-field
+                        v-if="selectedItem"
+                        :value="selectedItem[item.fieldName]"
+                        @input="updateItem(item, selectedItem.id, $event)"
+                        label="Regular"
+                        clearable
+                      ></v-text-field
+                    ></v-col>
+                  </v-row>
+                  <v-row v-if="Array.isArray(selectedItem[item.fieldName])">
+                    <v-col>
+                      <ArrayEditor
+                        v-if="selectedItem"
+                        :value="selectedItem[item.fieldName]"
+                      ></ArrayEditor
+                    ></v-col>
+                  </v-row> -->
+                </v-col>
               </v-row>
             </v-container>
           </div>
@@ -93,14 +165,14 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
-import Logo from "~/components/Logo.vue";
-import VuetifyLogo from "~/components/VuetifyLogo.vue";
+import Logo from '~/components/Logo.vue'
+import VuetifyLogo from '~/components/VuetifyLogo.vue'
 
 const TOKENIZED = {
-  PAGE_NAME: "PMeetingSeries",
-};
+  PAGE_NAME: 'PMeetingSeries',
+}
 
 export default {
   components: {
@@ -109,22 +181,22 @@ export default {
   },
   computed: {
     schemaDisplayDefinition() {
-      return this.$store.getters["SMeetingSeries/schemaDisplayDefinition"];
+      return this.$store.getters['SMeetingSeries/schemaDisplayDefinition']
     },
     headers() {
       if (!this.schemaDisplayDefinition) {
-        return [];
+        return []
       }
 
       return this.schemaDisplayDefinition.map((col) => {
         return {
           text: col.fieldName,
           value: col.fieldName,
-        };
-      });
+        }
+      })
     },
 
-    ...mapGetters({all: 'SMeetingSeries/all'}),
+    ...mapGetters({ all: 'SMeetingSeries/all' }),
   },
   props: {
     light: {
@@ -133,28 +205,41 @@ export default {
     },
   },
   methods: {
+    computeArrayId(item, selectedItem) {
+      return (selectedItem ? selectedItem.id : 'noId') + item.fieldName
+    },
+    formatCell(value) {
+      console.log(value)
+      if (Array.isArray(value)) {
+        return `Array: length(${value.length})`
+      }
+
+      return value
+    },
     updateItem(fieldDef, id, e) {
-      this.$store.dispatch("SMeetingSeries/update", {
+      this.$store.dispatch('SMeetingSeries/update', {
         fieldDef,
         id: id,
         newValue: e,
-      });
+      })
     },
     rowClick: function (item, row) {
-      row.select(true);
-      this.selectedId = item.id;
-      this.selectedItem = item;
+      row.select(true)
+      this.selectedId = item.id
+      this.selectedItem = item
     },
   },
 
   data() {
     return {
+      search: null,
+      arrayEditToggle: {},
       pageName: TOKENIZED.PAGE_NAME,
       selectedItem: null,
       selectedId: null,
-    };
+    }
   },
-};
+}
 </script>
 
 
