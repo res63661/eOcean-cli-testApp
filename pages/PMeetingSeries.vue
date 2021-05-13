@@ -94,18 +94,26 @@
               >
                 <v-col>
                   <v-row>
-                    <v-col> header </v-col>
+                    <v-col> {{ item.fieldName }} </v-col>
                     <v-col
                       v-if="
                         selectedItem &&
                         !Array.isArray(selectedItem[item.fieldName])
                       "
                     >
-                      non array data
+                      <v-text-field
+                        v-if="selectedItem"
+                        :value="selectedItem[item.fieldName]"
+                        @input="updateItem(item, selectedItem.id, $event)"
+                        label="Regular"
+                        clearable
+                      ></v-text-field>
                     </v-col>
                     <v-col v-else>
                       <v-row>
-                        <v-col> array data </v-col>
+                        <v-col>
+                          {{ formatArrayCellDescription(selectedItem, item) }}
+                        </v-col>
                         <v-col cols="2">
                           <v-switch
                             v-model="
@@ -119,16 +127,26 @@
                       </v-row>
                     </v-col>
                   </v-row>
-                  <v-row
-                    v-if="
-                      selectedItem &&
-                      Array.isArray(selectedItem[item.fieldName])
-                    "
-                  >
-                    <v-col class="tile blue ma-2 rounded elevation-12">
-                      Array header
-                    </v-col>
-                  </v-row>
+
+                  <v-expand-transition>
+                    <v-row
+                      v-if="
+                        selectedItem &&
+                        Array.isArray(selectedItem[item.fieldName]) &&
+                        arrayEditToggle[computeArrayId(item, selectedItem)]
+                      "
+                    >
+                      <v-col class="tile blue ma-2 rounded elevation-12">
+                        <ArrayEditor
+                          :all="
+                            selectedItem ? selectedItem[item.fieldName] : null
+                          "
+                          v-if="selectedItem"
+                          :value="selectedItem[item.fieldName]"
+                        ></ArrayEditor>
+                      </v-col>
+                    </v-row>
+                  </v-expand-transition>
                   <!--<v-row>
                     <v-col>{{ item.fieldName }}</v-col>
                    <v-col
@@ -205,6 +223,12 @@ export default {
     },
   },
   methods: {
+    formatArrayCellDescription(selectedItem, item) {
+      if (!selectedItem) return ''
+      if (!item) return ''
+
+      return selectedItem[item.fieldName]
+    },
     computeArrayId(item, selectedItem) {
       return (selectedItem ? selectedItem.id : 'noId') + item.fieldName
     },
