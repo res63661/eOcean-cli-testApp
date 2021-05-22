@@ -1,0 +1,42 @@
+{
+  "projectName": "Login-Plugin",
+  "pages": [],
+  "controls": [
+    {
+      "name": "CLogin",
+      "templateFile": "CLogin_Template.vue",
+      "description": "Launches a login view when clicked.  If user is not logged in then shows 'Login' else shows 'Logout'",
+      "primaryStoreName": "SAuth",
+      "mappedGetters": [
+        {
+          "storeName": "SAuth",
+          "propertyName": "isLoggedIn"
+        }
+      ]
+    }
+  ],
+  "stores": [
+    {
+      "name": "SAuth",
+      "description": "Manages user auth and logged in state.",
+      "actions": [
+        {
+          "name": "doLogin",
+          "description": "logs the user in to db"
+        }
+      ],
+      "properties": [
+        {
+          "name": "isLoggedIn",
+          "description": "True iff user is logged in",
+          "defaultValue": "false"
+        },
+        {
+          "name": "loginAPIEndpoint",
+          "description": "The endpoint for the login api (i.e. /api/login)",
+          "defaultValue": "/api/login"
+        }
+      ]
+    }
+  ]
+}
