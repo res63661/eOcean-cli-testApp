@@ -11,6 +11,14 @@
         {
           "storeName": "SAuth",
           "propertyName": "isLoggedIn"
+        },
+        {
+          "storeName": "SAuth",
+          "propertyName": "loading"
+        },
+        {
+          "storeName": "SAuth",
+          "propertyName": "loginErrMessage"
         }
       ]
     }
@@ -18,18 +26,14 @@
   "stores": [
     {
       "name": "SAuth",
+      "templateFile": "SLogin_Template.js",
       "description": "Manages user auth and logged in state.",
-      "actions": [
-        {
-          "name": "doLogin",
-          "description": "logs the user in to db"
-        }
-      ],
+
       "properties": [
         {
           "name": "isLoggedIn",
           "description": "True iff user is logged in",
-          "defaultValue": "false"
+          "defaultValue": false
         },
         {
           "name": "loginAPIEndpoint",
