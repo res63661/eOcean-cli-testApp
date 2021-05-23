@@ -19,6 +19,26 @@
         {
           "storeName": "SAuth",
           "propertyName": "loginErrMessage"
+        },
+        {
+          "storeName": "SAuth",
+          "propertyName": "me"
+        }
+      ]
+    },
+    {
+      "name": "CProfileCard",
+      "templateFile": "CProfileCard_Template.vue",
+      "description": "Shows user's profile data in a concise layout.  Supports password reset, email and avatar management",
+      "primaryStoreName": "SAuth",
+      "mappedGetters": [
+        {
+          "storeName": "SAuth",
+          "propertyName": "isLoggedIn"
+        },
+        {
+          "storeName": "SAuth",
+          "propertyName": "me"
         }
       ]
     }
@@ -31,14 +51,34 @@
 
       "properties": [
         {
+          "name": "loading",
+          "description": "True if app is in a loading state.  Bind your progress indicators here.",
+          "defaultValue": false
+        },
+        {
           "name": "isLoggedIn",
           "description": "True iff user is logged in",
           "defaultValue": false
         },
         {
+          "name": "loginErrMessage",
+          "description": "Any error messages from loggin in should be emitted here.",
+          "defaultValue": null
+        },
+        {
           "name": "loginAPIEndpoint",
           "description": "The endpoint for the login api (i.e. /api/login)",
-          "defaultValue": "/api/login"
+          "defaultValue": "http://localhost:9000/auth"
+        },
+        {
+          "name": "me",
+          "description": "User data from auth service",
+          "defaultValue": null
+        },
+        {
+          "name": "token",
+          "description": "Primary auth token",
+          "defaultValue": null
         }
       ]
     }

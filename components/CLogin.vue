@@ -14,18 +14,14 @@
 <template>
   <div>
     <!-- {{ $data }} -->
-    {{ isLoggedIn }}
-    Store {{ $store.getters["SAuth/isLoggedIn"] }}
+    <!-- {{ isLoggedIn }}
+    Store {{ $store.getters["SAuth/isLoggedIn"] }} -->
 
     <v-btn class="elevation-0" v-if="!isLoggedIn" @click="show = true"
       >Login</v-btn
     >
-    <v-btn
-      class="elevation-0"
-      v-if="isLoggedIn"
-      @click="$store.dispatch('SAuth/doLogout')"
-      >Logout</v-btn
-    >
+
+    <c-profile-card v-if="me && isLoggedIn"></c-profile-card>
 
     <v-dialog v-model="show" max-width="450px">
       <v-card class="elevation-8" :loading="loading">
@@ -78,64 +74,64 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    // // ...mapGetters({
-    // //   isLoggedIn: 'SAuth/isLoggedIn',
-    // //   loading: 'SAuth/loading',
-    // //   loginErrMessage: 'SAuth/loginErrMessage',
-    // // }),
-    ...mapGetters({isLoggedIn: 'SAuth/isLoggedIn',loading: 'SAuth/loading',loginErrMessage: 'SAuth/loginErrMessage',}),
+    ...mapGetters({
+      isLoggedIn: 'SAuth/isLoggedIn',
+      loading: 'SAuth/loading',
+      loginErrMessage: 'SAuth/loginErrMessage',
+      me: 'SAuth/me',
+    }),
   },
 
   data() {
     return {
       show: false,
-      un: "",
-      pw: "",
+      un: '',
+      pw: '',
       rules: {
-        required: (value) => !!value || "Required.",
+        required: (value) => !!value || 'Required.',
       },
       isValid: true,
-    };
+    }
   },
   watch: {
     isLoggedIn(newValue, oldValue) {
       if (newValue) {
-        this.show = false;
+        this.show = false
       }
     },
     show(newValue) {
-      this.$emit("input", newValue);
+      this.$emit('input', newValue)
     },
   },
   props: {
     value: Boolean,
     homeRoute: {
-      default: "/",
+      default: '/',
     },
   },
   methods: {
     doLogin: async function () {
-      await this.$store.dispatch("SAuth/doLogin", {
+      await this.$store.dispatch('SAuth/doLogin', {
         userName: this.un,
         password: this.pw,
-      });
+      })
 
       if (this.isLoggedIn) {
-        this.$router.push({ path: this.homeRoute });
+        this.$router.push({ path: this.homeRoute })
       }
     },
 
     pwKeypress(e) {
-      if (e.key === "Enter" && this.isValid) {
-        this.doLogin();
+      if (e.key === 'Enter' && this.isValid) {
+        this.doLogin()
       }
     },
   },
-};
+}
 </script>
 
 <style>
