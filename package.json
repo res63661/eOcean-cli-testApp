@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.12.5",
+    "axios": "^0.21.1",
+    "btoa": "^1.2.1",
     "core-js": "^3.8.3",
     "node-ask": "^1.0.1",
     "nuxt": "^2.14.12",
