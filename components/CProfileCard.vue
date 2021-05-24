@@ -5,7 +5,7 @@
         <v-avatar size="36">
           <v-img v-if="me && me.picture" :src="me.picture"></v-img>
           <span v-else-if="me" class="white--text headline">{{
-            me.name ? me.name.substr(0, 1) : ''
+            me.name ? me.name.substr(0, 1) : ""
           }}</span>
         </v-avatar>
       </v-btn>
@@ -23,7 +23,7 @@
             title="My Profile"
             depressed
             text
-            @click="$store.dispatch('SAuth/doLogout')"
+            @click="$router.push({ name: 'PUser' })"
           >
             <v-icon>mdi-account-circle-outline</v-icon>
           </v-btn>
@@ -37,19 +37,15 @@
   </v-menu>
 </template>
 
+
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters({ isLoggedIn: 'SAuth/isLoggedIn', me: 'SAuth/me' }),
+    ...mapGetters({isLoggedIn: 'SAuth/isLoggedIn',me: 'SAuth/me',}),
   },
-  data() {
-    return {
-      dialog: null,
-    }
-  },
-}
+};
 </script>
 
 <style>

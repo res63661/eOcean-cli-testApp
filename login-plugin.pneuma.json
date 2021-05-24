@@ -1,6 +1,19 @@
 {
   "projectName": "Login-Plugin",
-  "pages": [],
+  "pages": [
+    {
+      "name": "PUser",
+      "templateFile": "PUser_Template.vue",
+      "description": "Shows a dashboard of user profile card, profile editor",
+      "primaryStoreName": "SAuth",
+      "mappedGetters": [
+        {
+          "storeName": "SAuth",
+          "propertyName": "me"
+        }
+      ]
+    }
+  ],
   "controls": [
     {
       "name": "CLogin",
