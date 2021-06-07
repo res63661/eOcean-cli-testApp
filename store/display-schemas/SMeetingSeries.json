@@ -1,1 +1,46 @@
-[{"fieldName":"id","type":"label","label":"id"},{"fieldName":"meetingName","type":"textField","label":"Meeting Name"},{"fieldName":"frequency","type":"ddl","label":"Frequency","ddlList":["Every Weekday","Every Day","Custom"]},{"fieldName":"required","type":"textField"},{"fieldName":"meetings","type":"textField"}]
+[
+  { "fieldName": "id", "type": "label", "label": "id" },
+  { "fieldName": "meetingName", "type": "textField", "label": "Meeting Name" },
+  {
+    "fieldName": "frequency",
+    "type": "ddl",
+    "label": "Frequency",
+    "ddlList": ["Every Weekday", "Every Day", "Custom"]
+  },
+  { "fieldName": "required", "type": "textField" },
+  {
+    "fieldName": "meetings",
+    "type": "textField",
+    "childDisplaySchema": [
+      { "fieldName": "id", "type": "label", "label": "id" },
+      {
+        "fieldName": "dateOfMeeting",
+        "type": "textField",
+        "label": "Date of Meeting"
+      },
+      {
+        "fieldName": "actionItems",
+        "type": "textField",
+        "label": "Action Items",
+        "childDisplaySchema": [
+          { "fieldName": "id", "type": "label", "label": "id" },
+          {
+            "fieldName": "who",
+            "type": "textField",
+            "label": "Who"
+          },
+          {
+            "fieldName": "what",
+            "type": "textField",
+            "label": "What"
+          },
+          {
+            "fieldName": "dueBy",
+            "type": "textField",
+            "label": "Date of Meeting"
+          }
+        ]
+      }
+    ]
+  }
+]

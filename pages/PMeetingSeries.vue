@@ -136,9 +136,7 @@
                         arrayEditToggle[computeArrayId(item, selectedItem)]
                       "
                     >
-                      <v-col
-                        class="tile arrayEditorSurround ma-2 rounded elevation-12"
-                      >
+                      <v-col class="tile blue ma-2 rounded elevation-12">
                         <ArrayEditor
                           :all="
                             selectedItem ? selectedItem[item.fieldName] : null
@@ -148,6 +146,7 @@
                           :parentFieldName="
                             computeParentFieldName(selectedItem, item)
                           "
+                          :schemaDisplayDefinition="item.childDisplaySchema"
                         ></ArrayEditor>
                       </v-col>
                     </v-row>

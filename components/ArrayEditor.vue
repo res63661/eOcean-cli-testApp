@@ -9,13 +9,16 @@
           <br />
           Selected id : {{ selectedId }}
           <br />
-          Selected iten : {{ selectedItem }}
-          <br />
           All: {{ all }}
           <br />
           Headers: {{ computeHeaders }}
           <br />
-          Parent filed name: {{ parentFieldName }}
+          Selected item: {{ selectedItem }}
+          <br />
+          ArrayEditor Value: {{ value }}
+          <br />
+          schemaDisplayDefinition: {{ schemaDisplayDefinition }}
+
           <div class="masterList">
             <v-container>
               <v-row>
@@ -52,18 +55,20 @@
           </div>
 
           <div class="selectedItem">
-            <v-container>
-              ComputeKeys: {{ computeKeys(selectedItem) }}
-              <v-row v-for="item in computeKeys(selectedItem)" :key="item">
+            <!-- <v-container>
+              <v-row v-for="item in selectedItem" :key="item.fieldName">
                 <v-col>
                   <v-row>
-                    <v-col> {{ item }} </v-col>
+                    <v-col> {{ item.fieldName }} </v-col>
                     <v-col
-                      v-if="selectedItem && !Array.isArray(selectedItem[item])"
+                      v-if="
+                        selectedItem &&
+                        !Array.isArray(selectedItem[item.fieldName])
+                      "
                     >
                       <v-text-field
                         v-if="selectedItem"
-                        :value="selectedItem[item]"
+                        :value="selectedItem[item.fieldName]"
                         @input="updateItem(item, selectedItem.id, $event)"
                         label="Regular"
                         clearable
@@ -72,6 +77,47 @@
                     <v-col v-else>
                       <v-row>
                         <v-col> {{ formatCell(selectedItem) }} </v-col>
+                        <v-col cols="2">
+                          <v-switch
+                            v-model="
+                              arrayEditToggle[
+                                computeArrayId(item, selectedItem)
+                              ]
+                            "
+                            >Edit</v-switch
+                          >
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row> -->
+
+            <v-container>
+              <v-row
+                v-for="item in schemaDisplayDefinition"
+                :key="item.fieldName"
+              >
+                <v-col>
+                  <v-row>
+                    <v-col> {{ item.fieldName }} </v-col>
+                    <v-col
+                      v-if="
+                        selectedItem &&
+                        !Array.isArray(selectedItem[item.fieldName])
+                      "
+                    >
+                      <v-text-field
+                        v-if="selectedItem"
+                        :value="selectedItem[item.fieldName]"
+                        @input="updateItem(item, selectedItem.id, $event)"
+                        label="Regular"
+                        clearable
+                      ></v-text-field>
+                    </v-col>
+                    <v-col v-else>
+                      <v-row>
+                        <v-col>
+                          {{ formatArrayCellDescription(selectedItem, item) }}
+                        </v-col>
                         <v-col cols="2">
                           <v-switch
                             v-model="
@@ -96,11 +142,11 @@
                     >
                       <v-col class="tile blue ma-2 rounded elevation-12">
                         <ArrayEditor
-                          :all="selectedItem[item.fieldName]"
                           v-if="selectedItem"
                           :value="selectedItem[item.fieldName]"
-                          :parentFieldName="
-                            computeParentFieldName(selectedItem)
+                          :schemaDisplayDefinition="item.childDisplaySchema"
+                          :all="
+                            selectedItem ? selectedItem[item.fieldName] : null
                           "
                         ></ArrayEditor>
                       </v-col>
@@ -142,12 +188,36 @@
 </template>
 
 <script>
-const TOKENIZED = {
-  STORE_NAME: 'SMeetingSeries',
-}
-
 export default {
   computed: {
+    // schemaDisplayDefinition() {
+    //   return [
+    //     { fieldName: 'id', type: 'label', label: 'id' },
+    //     {
+    //       fieldName: 'dateOfMeeting',
+    //       type: 'textField',
+    //       label: 'Date of Meeting',
+    //     },
+    //     {
+    //       fieldName: 'actionItems',
+    //       type: 'textField',
+    //       label: 'Action Items',
+    //     },
+    //   ]
+    // },
+    // headers() {
+    //   if (!this.schemaDisplayDefinition) {
+    //     return []
+    //   }
+
+    //   return this.schemaDisplayDefinition.map((col) => {
+    //     return {
+    //       text: col.fieldName,
+    //       value: col.fieldName,
+    //     }
+    //   })
+    // },
+
     computeHeaders() {
       if (!this.all) return []
       if (this.all.length === 0) return []
@@ -162,21 +232,15 @@ export default {
     },
   },
   methods: {
-    computeParentFieldName(selectedItem) {
-      //Return the combination of my parentfield name and current id.
-      return `${this.parentFieldName}/${selectedItem['id']}`
+    formatArrayCellDescription(selectedItem, item) {
+      if (!selectedItem) return ''
+      if (!item) return ''
+
+      return selectedItem[item.fieldName]
     },
-    updateItem(fieldDef, id, e) {
-      this.$store.dispatch(`${TOKENIZED.STORE_NAME}/update`, {
-        fieldDef,
-        id: id,
-        newValue: e,
-        parentFieldName: `${this.parentFieldName}/${id}/${fieldDef}`,
-      })
-    },
-    computeKeys(item) {
-      if (!item) return []
-      return Object.keys(item)
+    computeArrayId(item, selectedItem) {
+      return (selectedItem ? selectedItem.id : 'noId') + item.fieldName
+      //return selectedItem ? selectedItem.id : 0
     },
     formatCell(value) {
       console.log(value)
@@ -193,11 +257,11 @@ export default {
     },
   },
   props: {
-    parentFieldName: {
-      type: String,
-      default: null,
-    },
     all: {
+      type: Array,
+      default: () => [],
+    },
+    schemaDisplayDefinition: {
       type: Array,
       default: () => [],
     },
@@ -207,6 +271,7 @@ export default {
       search: null,
       selectedItem: null,
       selectedId: null,
+      arrayEditToggle: {},
     }
   },
 }
