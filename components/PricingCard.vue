@@ -3,6 +3,11 @@
     <!-- {{ item }} -->
     <v-row justify="center" class="ma-8 flex-column" align="center" dense>
       <v-col>
+        <v-card class="elevation-0 text-center">
+          <v-icon size="50" :color="item.iconColor">{{ item.icon }}</v-icon>
+        </v-card>
+      </v-col>
+      <v-col>
         <v-card class="elevation-0 text-center"
           ><span class="text-overline">{{ item.title }}</span></v-card
         >
@@ -66,7 +71,7 @@
           <v-span class="text-center text-overline">Features</v-span>
         </v-card>
       </v-col>
-      <v-col style="text-align: center">
+      <v-col style="text-align: center; my-4">
         <v-card
           v-for="feature in item.features"
           :key="feature"
@@ -84,11 +89,22 @@
     </v-row>
 
     <v-divider></v-divider>
-    <v-row no-gutters class="text-center my-4">
-      <v-col sm="12">
-        <v-btn>Buy Now!</v-btn>
-      </v-col>
-    </v-row>
+
+    <v-card class="fill-height elevation-0" height="100">
+      <v-row align="center" style="height: 100%">
+        <v-col sm="12" justify="end">
+          <v-btn color="pink lighten-1" outlined class="white--text"
+            >Buy Now!</v-btn
+          >
+        </v-col>
+        <!-- <v-col cols="12"><v-icon>mdi-phone-classic</v-icon></v-col>
+        <v-col cols="12" justify="start">
+          <v-btn text color="pink lighten-1 mt-2" class="white--text"
+            >Contact Sales (xxx) xxx - xxxx</v-btn
+          >
+        </v-col> -->
+      </v-row>
+    </v-card>
   </v-card>
 </template>
 

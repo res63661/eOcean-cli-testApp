@@ -1,11 +1,11 @@
 <template>
-  <v-sheet class="grey lighten-3">
+  <v-sheet class="grey lighten-5">
     <v-container fluid class="blue mx-auto">
       <v-row style="height: 200px">
         <v-col height="500"></v-col>
       </v-row>
     </v-container>
-    <v-container>
+    <v-container class="py-8">
       <v-row>
         <v-col
           v-for="item in pricingItems"
@@ -36,6 +36,8 @@ export default {
       pricingItems: [
         {
           title: 'Gold',
+          iconColor: 'yellow',
+          icon: 'mdi-license',
           price: '30',
           userCount: '1-5',
           docketViewsPerMonth: '10 cents each + 89&#162 per download',
@@ -47,6 +49,8 @@ export default {
         },
         {
           title: 'Platinum',
+          iconColor: 'grey',
+          icon: 'mdi-account-group',
           price: '30',
           userCount: '1-20',
           docketViewsPerMonth: ' 10 cents each + 89 &#162; per download',
@@ -58,6 +62,8 @@ export default {
         },
         {
           title: 'Enterprise',
+          iconColor: 'blue',
+          icon: 'mdi-domain',
           userCount: 'Call',
           price: '25',
           docketViewsPerMonth: 'Unlimited',

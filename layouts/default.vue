@@ -7,6 +7,7 @@
       fixed
       app
     >
+      Allroutes: {{ allRoutes }}
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -65,7 +66,33 @@
 
 <script>
 import CLogin from '~/components/CLogin.vue'
+import { mapGetters } from 'vuex'
+
 export default {
+  mounted() {
+    this.$nextTick(function () {
+      // Code that will run only after the
+      // entire view has been rendered
+
+      //refresh all routes
+      this.$store.dispatch('SAuth/allRoutes', this.$router).then((routes) => {
+        //Add each route to our list of routes.
+        if (!routes) return
+        routes.map((route) => {
+          this.items.push({
+            icon: route.icon,
+            to: route.path,
+            title: route.name,
+          })
+        })
+      })
+    })
+  },
+  computed: {
+    ...mapGetters({
+      allRoutes: 'SAuth/allRoutes',
+    }),
+  },
   components: { CLogin },
   data() {
     return {

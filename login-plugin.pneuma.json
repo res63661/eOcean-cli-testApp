@@ -81,7 +81,7 @@
         {
           "name": "loginAPIEndpoint",
           "description": "The endpoint for the login api (i.e. /api/login)",
-          "defaultValue": "http://localhost:9000/auth"
+          "defaultValue": "http://localhost:9001/auth"
         },
         {
           "name": "me",

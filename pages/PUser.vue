@@ -2,7 +2,7 @@
   <v-container fluid>
     <!-- {{ me }} -->
     <v-row v-if="me">
-      <v-col sm="12" md="4">
+      <v-col cols="4">
         <v-card>
           <v-img height="250" src="https://picsum.photos/374/374" />
 
@@ -142,14 +142,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from "vuex";
 
 export default {
   computed: {
     user() {
-      return this.me || {}
+      return this.me || {};
     },
-    ...mapGetters({ me: 'SAuth/me' }),
+    ...mapGetters({me: 'SAuth/me',}),
   },
   methods: {
     async requestPasswordChange() {
@@ -159,59 +159,59 @@ export default {
 
     async uploadPicture(formPicture) {
       if (!formPicture) {
-        return
+        return;
       }
 
-      this.loading = true
+      this.loading = true;
       try {
-        const formData = new FormData()
-        formData.append('file', formPicture)
+        const formData = new FormData();
+        formData.append("file", formPicture);
 
-        await axios.post('/api/users/current/avatar', formData, {
+        await axios.post("/api/users/current/avatar", formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
-        })
+        });
 
-        this.$store.dispatch('account/updateMe')
+        this.$store.dispatch("account/updateMe");
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 
     launchSelector() {
-      this.loading = true
+      this.loading = true;
       window.addEventListener(
-        'focus',
+        "focus",
         () => {
-          this.loading = false
+          this.loading = false;
         },
         { once: true }
-      )
+      );
 
-      this.uploader.click()
+      this.uploader.click();
     },
 
     onFileChanged(e) {
-      const selectedFile = e.target.files[0]
+      const selectedFile = e.target.files[0];
       if (!selectedFile) {
-        return
+        return;
       }
 
       if (selectedFile.size > this.maxFileSize) {
-        alert('File is too large')
-        return
+        alert("File is too large");
+        return;
       }
 
-      this.uploadPicture(selectedFile)
+      this.uploadPicture(selectedFile);
     },
   },
   data() {
     return {
       hideUserActions: false,
-    }
+    };
   },
-}
+};
 </script>
 
 
