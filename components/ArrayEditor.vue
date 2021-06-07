@@ -5,6 +5,8 @@
         <v-card :light="light ? light : dark">
           Schema 1 CRUD
 
+          <v-card v-if="$store.getters['SSys/showDevControls']"> </v-card>
+
           {{ $data }}
           <br />
           Selected id : {{ selectedId }}
@@ -18,6 +20,8 @@
           ArrayEditor Value: {{ value }}
           <br />
           schemaDisplayDefinition: {{ schemaDisplayDefinition }}
+          <br />
+          allSubtreeAddress: {{ allSubtreeAddress }}
 
           <div class="masterList">
             <v-container>
@@ -33,12 +37,19 @@
                     single-select
                   >
                     <template v-slot:top>
-                      <v-text-field
-                        class="mx-4"
-                        prepend-icon="mdi-magnify"
-                        label="Search table"
-                        v-model="search"
-                      ></v-text-field>
+                      <v-toolbar flat>
+                        <v-text-field
+                          class="mx-4"
+                          prepend-icon="mdi-magnify"
+                          label="Search table"
+                          v-model="search"
+                        ></v-text-field>
+                        <v-divider class="mx-4" inset vertical></v-divider>
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="addNew"
+                          ><v-icon>mdi-plus</v-icon></v-btn
+                        >
+                      </v-toolbar>
                     </template>
 
                     <!-- This template looks for headers with formatters and executes them -->
@@ -148,6 +159,9 @@
                           :all="
                             selectedItem ? selectedItem[item.fieldName] : null
                           "
+                          :allSubtreeAddress="
+                            computeSelectedSubtree(selectedItem, item.fieldName)
+                          "
                         ></ArrayEditor>
                       </v-col>
                     </v-row>
@@ -190,6 +204,16 @@
 <script>
 export default {
   computed: {
+    computeSelectedSubtree(selectedItem, fieldName) {
+      return (selectedItem, fieldName) => {
+        if (this.allSubtreeAddress) {
+          this.allSubtreeAddress.push({ id: selectedItem.id, fieldName })
+          return this.allSubtreeAddress
+        } else {
+          return [{ id: selectedItem.id, fieldName }]
+        }
+      }
+    },
     // schemaDisplayDefinition() {
     //   return [
     //     { fieldName: 'id', type: 'label', label: 'id' },
@@ -232,6 +256,19 @@ export default {
     },
   },
   methods: {
+    getNextId() {
+      /***Compute hightest id from all list and add one. */
+      if (!this.all) {
+        this.all = []
+        return 1
+      }
+
+      return this.all.sort((a, b) => a - b)[this.all.length - 1].id + 1
+    },
+    addNew() {
+      /**Given our schema, add new item to array with default values. */
+      this.$store.dispatch('SMeetingSeries/add', this.allSubtreeAddress)
+    },
     formatArrayCellDescription(selectedItem, item) {
       if (!selectedItem) return ''
       if (!item) return ''
@@ -264,6 +301,11 @@ export default {
     schemaDisplayDefinition: {
       type: Array,
       default: () => [],
+    },
+    /**Use this to track where in the all subtree we are. */
+    allSubtreeAddress: {
+      type: Array,
+      default: '',
     },
   },
   data() {

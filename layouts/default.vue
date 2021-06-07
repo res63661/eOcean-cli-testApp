@@ -7,7 +7,7 @@
       fixed
       app
     >
-      Allroutes: {{ allRoutes }}
+      <!-- Allroutes: {{ allRoutes }} -->
       <v-list>
         <v-list-item
           v-for="(item, i) in items"

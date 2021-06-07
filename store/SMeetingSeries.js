@@ -56,6 +56,7 @@ export const state = () => ({
       ],
       meetings: [
         {
+          id: 1,
           dateOfMeeting: '1/5/2021',
           actionItems: [
             { id: 1, who: 'Rich', what: 'build an app', dueBy: '3/5/2021' },
@@ -95,6 +96,10 @@ export const actions = {
   },
   /*moves meeting playhead fwd one meeting*/
   advanceMeetingPlayhead: (ctx, value) => {},
+
+  add: (ctx, subtreeAddress) => {
+    ctx.commit('add', subtreeAddress)
+  },
 }
 
 export const mutations = {
@@ -134,11 +139,42 @@ export const mutations = {
 
     updateLevelN(state, data)
   },
-  add(state, text) {
-    all.list.push({
-      text,
-      done: false,
-    })
+  add(state, subtreeAddress) {
+    /**Using the given subtree as an address for the current array being edited,
+     * add new value
+     */
+    try {
+      let childNode
+
+      //If no subtree address then add new to all and return
+      if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
+
+      //Else, walk subtree addresses until exhausted then add new.
+      //Get the root value and apply to first node.
+      childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
+        subtreeAddress[0].fieldName
+      ]
+
+      //Iterate down through children if applicable
+      for (let n = 1; n < subtreeAddress.length; n++) {
+        const address = subtreeAddress[n]
+        childNode = childNode.find((obj) => obj.id === address.id)[
+          address.fieldName
+        ]
+      }
+
+      const calcNewId = (v) => {
+        return v.sort((a, b) => b.id - a.id)[v.length - 1].id + 1
+      }
+
+      //Add new value with any defaults
+      childNode.push({ id: calcNewId(childNode) })
+    } catch (error) {
+      console.log(
+        'Error applying subtree address.  Check your index values?: ',
+        error
+      )
+    }
   },
   remove(state, { todo }) {
     all.list.splice(state.list.indexOf(todo), 1)

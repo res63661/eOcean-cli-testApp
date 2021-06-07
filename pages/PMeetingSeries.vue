@@ -147,6 +147,9 @@
                             computeParentFieldName(selectedItem, item)
                           "
                           :schemaDisplayDefinition="item.childDisplaySchema"
+                          :allSubtreeAddress="
+                            computeSelectedSubtree(selectedItem, item.fieldName)
+                          "
                         ></ArrayEditor>
                       </v-col>
                     </v-row>
@@ -202,6 +205,11 @@ export default {
     VuetifyLogo,
   },
   computed: {
+    computeSelectedSubtree(selectedItem, fieldName) {
+      return (selectedItem, fieldName) => {
+        return [{ id: selectedItem.id, fieldName }]
+      }
+    },
     schemaDisplayDefinition() {
       return this.$store.getters['SMeetingSeries/schemaDisplayDefinition']
     },
