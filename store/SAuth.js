@@ -45,7 +45,7 @@ export const actions = {
       routes.push({
         name: route.name,
         path: route.path,
-        icon: 'mdi-wizard-hat',
+        icon: 'mdi-link',
       })
     })
     ctx.commit('allRoutes', routes)

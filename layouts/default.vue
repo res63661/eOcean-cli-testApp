@@ -23,6 +23,33 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
+
+        <!-- BEGIN ALL ROUTES -->
+        <v-list-group no-action>
+          <template v-slot:activator>
+            <v-list-item-icon>
+              <v-icon>mdi-wizard-hat</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>All Routes</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            v-for="route in allRoutes"
+            :key="route.title"
+            :to="route.path"
+          >
+            <v-list-item-action>
+              <v-icon>{{ route.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="route.name" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+        <!-- END ALL ROUTES -->
       </v-list>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app>
@@ -77,14 +104,14 @@ export default {
       //refresh all routes
       this.$store.dispatch('SAuth/allRoutes', this.$router).then((routes) => {
         //Add each route to our list of routes.
-        if (!routes) return
-        routes.map((route) => {
-          this.items.push({
-            icon: route.icon,
-            to: route.path,
-            title: route.name,
-          })
-        })
+        // if (!routes) return
+        // routes.map((route) => {
+        //   this.items.push({
+        //     icon: route.icon,
+        //     to: route.path,
+        //     title: route.name,
+        //   })
+        // })
       })
     })
   },
