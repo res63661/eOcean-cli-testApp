@@ -3,25 +3,23 @@
     <v-row>
       <v-col>
         <v-card :light="light ? light : dark">
-          Schema 1 CRUD
-
-          <v-card v-if="$store.getters['SSys/showDevControls']"> </v-card>
-
-          {{ $data }}
-          <br />
-          Selected id : {{ selectedId }}
-          <br />
-          All: {{ all }}
-          <br />
-          Headers: {{ computeHeaders }}
-          <br />
-          Selected item: {{ selectedItem }}
-          <br />
-          ArrayEditor Value: {{ value }}
-          <br />
-          schemaDisplayDefinition: {{ schemaDisplayDefinition }}
-          <br />
-          allSubtreeAddress: {{ allSubtreeAddress }}
+          <v-card v-if="$store.getters['SSys/showDevControls']">
+            {{ $data }}
+            <br />
+            Selected id : {{ selectedId }}
+            <br />
+            All: {{ all }}
+            <br />
+            Headers: {{ computeHeaders }}
+            <br />
+            Selected item: {{ selectedItem }}
+            <br />
+            ArrayEditor Value: {{ value }}
+            <br />
+            schemaDisplayDefinition: {{ schemaDisplayDefinition }}
+            <br />
+            allSubtreeAddress: {{ allSubtreeAddress }}
+          </v-card>
 
           <div class="masterList">
             <v-container>
@@ -253,7 +251,8 @@ export default {
         return Object.keys(all[0]).map((key) => ({ text: key, value: key }))
       }
 
-      return computeAllHeaders(this.all)
+      this.computedHeaders = computeAllHeaders(this.all)
+      return this.computedHeaders
     },
   },
   methods: {
@@ -268,7 +267,17 @@ export default {
     },
     addNew() {
       /**Given our schema, add new item to array with default values. */
-      this.$store.dispatch('SMeetingSeries/add', this.allSubtreeAddress)
+      this.$store.dispatch('SMeetingSeries/add', {
+        subtreeAddress: this.allSubtreeAddress,
+        schemaDefinition: this.schemaDisplayDefinition,
+      })
+    },
+    updateItem(fieldDef, id, e) {
+      this.$store.dispatch('SMeetingSeries/update', {
+        fieldDef,
+        id: id,
+        newValue: e,
+      })
     },
     formatArrayCellDescription(selectedItem, item) {
       if (!selectedItem) return ''
@@ -315,6 +324,7 @@ export default {
       selectedItem: null,
       selectedId: null,
       arrayEditToggle: {},
+      computedHeaders: null,
     }
   },
 }

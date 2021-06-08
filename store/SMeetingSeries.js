@@ -97,8 +97,8 @@ export const actions = {
   /*moves meeting playhead fwd one meeting*/
   advanceMeetingPlayhead: (ctx, value) => {},
 
-  add: (ctx, subtreeAddress) => {
-    ctx.commit('add', subtreeAddress)
+  add: (ctx, addInfo) => {
+    ctx.commit('add', addInfo)
   },
 }
 
@@ -139,11 +139,12 @@ export const mutations = {
 
     updateLevelN(state, data)
   },
-  add(state, subtreeAddress) {
+  add(state, addInfo) {
     /**Using the given subtree as an address for the current array being edited,
      * add new value
      */
     try {
+      const { subtreeAddress, schemaDefinition } = addInfo
       let childNode
 
       //If no subtree address then add new to all and return
@@ -169,7 +170,30 @@ export const mutations = {
       }
 
       //Add new value with any defaults
-      childNode.push({ id: calcNewId(childNode) })
+      const createNew = (schemaDefinition) => {
+        const keys = Object.keys(schemaDefinition)
+        const newObj = {}
+        schemaDefinition.map((field) => {
+          switch (field.type) {
+            case 'text':
+              newObj[field.fieldName] = 'default'
+              break
+            case 'array':
+              newObj[field.fieldName] = []
+              break
+            case 'date':
+              newObj[field.fieldName] = Date.now()
+              break
+          }
+        })
+
+        return {
+          id: calcNewId(childNode),
+          ...newObj,
+        }
+      }
+
+      childNode.push(createNew(schemaDefinition))
     } catch (error) {
       console.log(
         'Error applying subtree address.  Check your index values?: ',

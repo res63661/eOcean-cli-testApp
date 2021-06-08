@@ -65,6 +65,7 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <v-switch v-model="showDevControls"> </v-switch>
       <c-login></c-login>
       <v-btn icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-menu</v-icon>
@@ -119,6 +120,14 @@ export default {
     ...mapGetters({
       allRoutes: 'SAuth/allRoutes',
     }),
+    showDevControls: {
+      get() {
+        return this.$store.getters['SSys/showDevControls']
+      },
+      set(value) {
+        this.$store.dispatch('SSys/showDevControls', value)
+      },
+    },
   },
   components: { CLogin },
   data() {

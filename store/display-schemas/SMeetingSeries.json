@@ -15,12 +15,12 @@
       { "fieldName": "id", "type": "label", "label": "id" },
       {
         "fieldName": "dateOfMeeting",
-        "type": "textField",
+        "type": "date",
         "label": "Date of Meeting"
       },
       {
         "fieldName": "actionItems",
-        "type": "textField",
+        "type": "array",
         "label": "Action Items",
         "childDisplaySchema": [
           { "fieldName": "id", "type": "label", "label": "id" },
