@@ -277,6 +277,8 @@ export default {
         fieldDef,
         id: id,
         newValue: e,
+        subtreeAddress: this.allSubtreeAddress,
+        schemaDefinition: this.schemaDisplayDefinition,
       })
     },
     formatArrayCellDescription(selectedItem, item) {

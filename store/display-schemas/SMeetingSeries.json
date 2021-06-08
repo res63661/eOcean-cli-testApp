@@ -1,18 +1,18 @@
 [
-  { "fieldName": "id", "type": "label", "label": "id" },
-  { "fieldName": "meetingName", "type": "textField", "label": "Meeting Name" },
+  { "fieldName": "id", "type": "id", "label": "id" },
+  { "fieldName": "meetingName", "type": "text-field", "label": "Meeting Name" },
   {
     "fieldName": "frequency",
     "type": "ddl",
     "label": "Frequency",
     "ddlList": ["Every Weekday", "Every Day", "Custom"]
   },
-  { "fieldName": "required", "type": "textField" },
+  { "fieldName": "required", "type": "text-field" },
   {
     "fieldName": "meetings",
-    "type": "textField",
+    "type": "text-field",
     "childDisplaySchema": [
-      { "fieldName": "id", "type": "label", "label": "id" },
+      { "fieldName": "id", "type": "id", "label": "id" },
       {
         "fieldName": "dateOfMeeting",
         "type": "date",
@@ -23,20 +23,20 @@
         "type": "array",
         "label": "Action Items",
         "childDisplaySchema": [
-          { "fieldName": "id", "type": "label", "label": "id" },
+          { "fieldName": "id", "type": "id", "label": "id" },
           {
             "fieldName": "who",
-            "type": "textField",
+            "type": "text-field",
             "label": "Who"
           },
           {
             "fieldName": "what",
-            "type": "textField",
+            "type": "text-field",
             "label": "What"
           },
           {
             "fieldName": "dueBy",
-            "type": "textField",
+            "type": "date",
             "label": "Date of Meeting"
           }
         ]

@@ -17,6 +17,7 @@
  */
 
 import displayDef from '@/store/display-schemas/SMeetingSeries.json'
+import { DateTime } from 'luxon'
 
 export const state = () => ({
   schemaDisplayDefinition: displayDef,
@@ -170,30 +171,45 @@ export const mutations = {
       }
 
       //Add new value with any defaults
-      const createNew = (schemaDefinition) => {
-        const keys = Object.keys(schemaDefinition)
-        const newObj = {}
-        schemaDefinition.map((field) => {
-          switch (field.type) {
-            case 'text':
-              newObj[field.fieldName] = 'default'
-              break
-            case 'array':
-              newObj[field.fieldName] = []
-              break
-            case 'date':
-              newObj[field.fieldName] = Date.now()
-              break
-          }
-        })
+      const createNew = (newObj, schemaDefinition) => {
+        for (let n = 0; n < schemaDefinition.length; n++) {
+          const fieldDef = schemaDefinition[n]
+          //proc child
+          //If has child display schema then recurse on it
+          if (fieldDef.childDisplaySchema) {
+            newObj[fieldDef.fieldName] = [
+              createNew({ id: 1 }, fieldDef.childDisplaySchema),
+            ]
+          } else {
+            //proc me
+            let newValue
+            switch (fieldDef.type) {
+              case 'id':
+                break //Skip id's
+              case 'label':
+                newValue = 'default label value'
+                break
+              case 'text-field':
+                newValue = 'default text value'
+                break
+              case 'date':
+                newValue = DateTime.now().toISO()
+                break
+              default:
+                newValue = null
+                break
+            }
 
-        return {
-          id: calcNewId(childNode),
-          ...newObj,
+            if (fieldDef.type !== 'id') {
+              newObj[fieldDef.fieldName] = newValue
+            }
+          }
         }
+
+        return newObj
       }
 
-      childNode.push(createNew(schemaDefinition))
+      childNode.push(createNew({ id: calcNewId(childNode) }, schemaDefinition))
     } catch (error) {
       console.log(
         'Error applying subtree address.  Check your index values?: ',
