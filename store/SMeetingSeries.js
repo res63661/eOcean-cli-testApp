@@ -164,7 +164,8 @@ export const mutations = {
       }
 
       const calcNewId = (v) => {
-        return v.sort((a, b) => b.id - a.id)[v.length - 1].id + 1
+        // return v.sort((a, b) => b.id - a.id)[v.length - 1].id + 1
+        return childNode.length + 1
       }
 
       //Add new value with any defaults

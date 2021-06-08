@@ -207,8 +207,9 @@ export default {
     computeSelectedSubtree(selectedItem, fieldName) {
       return (selectedItem, fieldName) => {
         if (this.allSubtreeAddress) {
-          this.allSubtreeAddress.push({ id: selectedItem.id, fieldName })
-          return this.allSubtreeAddress
+          const newSubtreeAddress = [...this.allSubtreeAddress]
+          newSubtreeAddress.push({ id: selectedItem.id, fieldName })
+          return newSubtreeAddress
         } else {
           return [{ id: selectedItem.id, fieldName }]
         }
@@ -305,7 +306,7 @@ export default {
     /**Use this to track where in the all subtree we are. */
     allSubtreeAddress: {
       type: Array,
-      default: '',
+      default: [],
     },
   },
   data() {
