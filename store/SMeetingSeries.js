@@ -76,24 +76,26 @@ export const getters = {
 }
 
 export const actions = {
-  update(ctx, data) {
-    const updateLevel0 = (ctx, data) => {
-      //FInd data in all by id then update.
-      const hits = ctx.state.all.filter((f) => f.id == data.id)
-      if (!hits)
-        throw `Error: found 0 hits in all data collection for id (${data.id})`
-      if (hits.length > 1)
-        throw `Error: found multiple id's in all data collection for id (${data.id})`
+  update(ctx, updateInfo) {
+    // // const updateLevel0 = (ctx, data) => {
+    // //   //FInd data in all by id then update.
+    // //   const hits = ctx.state.all.filter((f) => f.id == data.id)
+    // //   if (!hits)
+    // //     throw `Error: found 0 hits in all data collection for id (${data.id})`
+    // //   if (hits.length > 1)
+    // //     throw `Error: found multiple id's in all data collection for id (${data.id})`
 
-      //Update data in all data for hit and fire mutation
-      ctx.commit('update', { dataToUpdate: hits[0], newData: data })
-    }
+    // //   //Update data in all data for hit and fire mutation
+    // //   ctx.commit('update', { dataToUpdate: hits[0], newData: data })
+    // // }
 
-    if (!data.parentFieldName) {
-      updateLevel0(ctx, data)
-    } else {
-      ctx.commit('updateNestedChild', data)
-    }
+    // // if (!data.parentFieldName) {
+    // //   updateLevel0(ctx, data)
+    // // } else {
+    // //   ctx.commit('updateNestedChild', data)
+    // // }
+
+    ctx.commit('update', updateInfo)
   },
   /*moves meeting playhead fwd one meeting*/
   advanceMeetingPlayhead: (ctx, value) => {},
@@ -106,8 +108,47 @@ export const actions = {
 export const mutations = {
   schemaDisplayDefinition: (state, value) =>
     (state.schemaDisplayDefinition = value),
-  update(state, data) {
-    data.dataToUpdate[data.newData.fieldDef.fieldName] = data.newData.newValue
+  update(state, updateInfo) {
+    // // data.dataToUpdate[data.newData.fieldDef.fieldName] = data.newData.newValue
+
+    //Get update target from subtree address
+    const {
+      fieldDef,
+      id,
+      newValue,
+      subtreeAddress,
+      schemaDefinition,
+    } = updateInfo
+    let childNode
+
+    //If no subtree address then add new to all and return
+    if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
+
+    //Else, walk subtree addresses until exhausted then add new.
+    //Get the root value and apply to first node.
+    childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
+      subtreeAddress[0].fieldName
+    ]
+
+    //Iterate down through children if applicable
+    for (let n = 1; n < subtreeAddress.length; n++) {
+      const address = subtreeAddress[n]
+      childNode = childNode.find((obj) => obj.id === address.id)[
+        address.fieldName
+      ]
+    }
+
+    //Update target with field data
+    console.log(
+      'Updating target: ',
+      JSON.stringify(childNode),
+      ' with new value ',
+      newValue
+    )
+
+    //Get item in target level items array corresponding to row id being edited
+    childNode = childNode.find((obj) => obj.id === id)
+    childNode[fieldDef.fieldName] = newValue
   },
   updateNestedChild(state, data) {
     const updateLevelN = (state, data) => {
