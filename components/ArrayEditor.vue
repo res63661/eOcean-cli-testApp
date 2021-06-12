@@ -64,42 +64,6 @@
           </div>
 
           <div class="selectedItem">
-            <!-- <v-container>
-              <v-row v-for="item in selectedItem" :key="item.fieldName">
-                <v-col>
-                  <v-row>
-                    <v-col> {{ item.fieldName }} </v-col>
-                    <v-col
-                      v-if="
-                        selectedItem &&
-                        !Array.isArray(selectedItem[item.fieldName])
-                      "
-                    >
-                      <v-text-field
-                        v-if="selectedItem"
-                        :value="selectedItem[item.fieldName]"
-                        @input="updateItem(item, selectedItem.id, $event)"
-                        label="Regular"
-                        clearable
-                      ></v-text-field>
-                    </v-col>
-                    <v-col v-else>
-                      <v-row>
-                        <v-col> {{ formatCell(selectedItem) }} </v-col>
-                        <v-col cols="2">
-                          <v-switch
-                            v-model="
-                              arrayEditToggle[
-                                computeArrayId(item, selectedItem)
-                              ]
-                            "
-                            >Edit</v-switch
-                          >
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row> -->
-
             <v-container>
               <v-row
                 v-for="item in schemaDisplayDefinition"
@@ -150,17 +114,6 @@
                       "
                     >
                       <v-col class="tile blue ma-2 rounded elevation-12">
-                        <!-- <ArrayEditor
-                          v-if="selectedItem"
-                          :value="selectedItem[item.fieldName]"
-                          :schemaDisplayDefinition="item.childDisplaySchema"
-                          :all="
-                            selectedItem ? selectedItem[item.fieldName] : null
-                          "
-                          :allSubtreeAddress="
-                            computeSelectedSubtree(selectedItem, item.fieldName)
-                          "
-                        ></ArrayEditor> -->
                         <ArrayEditor
                           v-if="selectedItem"
                           :schemaDisplayDefinition="item.childDisplaySchema"
@@ -174,31 +127,6 @@
                       </v-col>
                     </v-row>
                   </v-expand-transition>
-                  <!--<v-row>
-                    <v-col>{{ item.fieldName }}</v-col>
-                   <v-col
-                      v-if="
-                        selectedItem &&
-                        !Array.isArray(selectedItem[item.fieldName])
-                      "
-                    >
-                      <v-text-field
-                        v-if="selectedItem"
-                        :value="selectedItem[item.fieldName]"
-                        @input="updateItem(item, selectedItem.id, $event)"
-                        label="Regular"
-                        clearable
-                      ></v-text-field
-                    ></v-col>
-                  </v-row>
-                  <v-row v-if="Array.isArray(selectedItem[item.fieldName])">
-                    <v-col>
-                      <ArrayEditor
-                        v-if="selectedItem"
-                        :value="selectedItem[item.fieldName]"
-                      ></ArrayEditor
-                    ></v-col>
-                  </v-row> -->
                 </v-col>
               </v-row>
             </v-container>
@@ -223,33 +151,6 @@ export default {
         }
       }
     },
-    // schemaDisplayDefinition() {
-    //   return [
-    //     { fieldName: 'id', type: 'label', label: 'id' },
-    //     {
-    //       fieldName: 'dateOfMeeting',
-    //       type: 'textField',
-    //       label: 'Date of Meeting',
-    //     },
-    //     {
-    //       fieldName: 'actionItems',
-    //       type: 'textField',
-    //       label: 'Action Items',
-    //     },
-    //   ]
-    // },
-    // headers() {
-    //   if (!this.schemaDisplayDefinition) {
-    //     return []
-    //   }
-
-    //   return this.schemaDisplayDefinition.map((col) => {
-    //     return {
-    //       text: col.fieldName,
-    //       value: col.fieldName,
-    //     }
-    //   })
-    // },
 
     computeHeaders() {
       if (!this.all) return []

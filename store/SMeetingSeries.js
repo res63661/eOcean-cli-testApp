@@ -65,6 +65,22 @@ export const state = () => ({
         },
       ],
     },
+    {
+      id: 3,
+      meetingName: 'Weekly',
+      frequency: 'every Tuesday',
+      required: [
+        { id: 1, email: 'abbay@estringsoftware.com', name: 'John Smitty' },
+        { id: 2, email: 'busoni@eoceandata.com', name: 'Richard Smith' },
+      ],
+      meetings: [
+        {
+          id: 1,
+          dateOfMeeting: '1/5/2021',
+          actionItems: [],
+        },
+      ],
+    },
   ], //Array of all meetingSeries objects for the org
 })
 
@@ -194,13 +210,21 @@ export const mutations = {
       let childNode
 
       //If no subtree address then add new to all and return
-      if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
+      // // if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
 
-      //Else, walk subtree addresses until exhausted then add new.
-      //Get the root value and apply to first node.
-      childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
-        subtreeAddress[0].fieldName
-      ]
+      if (subtreeAddress && subtreeAddress.length > 0) {
+        childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
+          subtreeAddress[0].fieldName
+        ]
+      } else {
+        childNode = state.all
+      }
+
+      // // //Else, walk subtree addresses until exhausted then add new.
+      // // //Get the root value and apply to first node.
+      // // childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
+      // //   subtreeAddress[0].fieldName
+      // // ]
 
       //Iterate down through children if applicable
       for (let n = 1; n < subtreeAddress.length; n++) {
