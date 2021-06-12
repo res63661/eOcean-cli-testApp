@@ -12,6 +12,7 @@
     "@nuxtjs/axios": "^5.12.5",
     "axios": "^0.21.1",
     "btoa": "^1.2.1",
+    "capital-case": "^1.0.4",
     "core-js": "^3.8.3",
     "luxon": "^1.27.0",
     "node-ask": "^1.0.1",

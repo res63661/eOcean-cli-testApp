@@ -2,7 +2,8 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
+        <v-card flat>
+          <v-card-title>{{ capCase(title) }}</v-card-title>
           <v-card v-if="$store.getters['SSys/showDevControls']">
             {{ $data }}
             <br />
@@ -36,14 +37,21 @@
                   >
                     <template v-slot:top>
                       <v-toolbar flat>
-                        <v-text-field
-                          class="mx-4"
-                          prepend-icon="mdi-magnify"
-                          label="Search table"
-                          v-model="search"
-                        ></v-text-field>
-                        <v-divider class="mx-4" inset vertical></v-divider>
                         <v-spacer></v-spacer>
+
+                        <v-slide-x-reverse-transition>
+                          <div v-if="showSearch">
+                            <v-text-field
+                              class="mt-4"
+                              label="Search"
+                              v-model="search"
+                            ></v-text-field>
+                          </div>
+                        </v-slide-x-reverse-transition>
+
+                        <v-btn icon @click="showSearch = !showSearch"
+                          ><v-icon>mdi-magnify</v-icon></v-btn
+                        >
                         <v-btn icon @click="addNew"
                           ><v-icon>mdi-plus</v-icon></v-btn
                         >
@@ -66,11 +74,25 @@
           <div class="selectedItem">
             <v-container>
               <v-row
+                v-if="
+                  !schemaDisplayDefinition ||
+                  schemaDisplayDefinition.length == 0
+                "
+                justify="center"
+                class="text-center"
+                ><v-col
+                  ><span class="warning--text text-h5"
+                    >Missing schemaDisplayDefinition</span
+                  ></v-col
+                ></v-row
+              >
+              <v-row
+                v-else
                 v-for="item in schemaDisplayDefinition"
                 :key="item.fieldName"
               >
                 <v-col>
-                  <v-row>
+                  <v-row align="center">
                     <v-col> {{ item.fieldName }} </v-col>
                     <v-col
                       v-if="
@@ -87,11 +109,11 @@
                       ></v-text-field>
                     </v-col>
                     <v-col v-else>
-                      <v-row>
+                      <v-row align="center">
                         <v-col>
                           {{ formatArrayCellDescription(selectedItem, item) }}
                         </v-col>
-                        <v-col cols="2">
+                        <v-col>
                           <v-switch
                             v-model="
                               arrayEditToggle[
@@ -113,7 +135,16 @@
                         arrayEditToggle[computeArrayId(item, selectedItem)]
                       "
                     >
-                      <v-col class="tile blue ma-2 rounded elevation-12">
+                      <v-col
+                        class="
+                          tile
+                          ma-2
+                          arrayEditorSurround
+                          rounded
+                          elevation-3
+                        "
+                        color="arrayEditorSurround"
+                      >
                         <ArrayEditor
                           v-if="selectedItem"
                           :schemaDisplayDefinition="item.childDisplaySchema"
@@ -123,6 +154,7 @@
                           :allSubtreeAddress="
                             computeSelectedSubtree(selectedItem, item.fieldName)
                           "
+                          :title="item ? item.fieldName : ''"
                         ></ArrayEditor>
                       </v-col>
                     </v-row>
@@ -138,6 +170,8 @@
 </template>
 
 <script>
+import { capitalCase } from 'capital-case'
+
 export default {
   computed: {
     computeSelectedSubtree(selectedItem, fieldName) {
@@ -167,6 +201,9 @@ export default {
     },
   },
   methods: {
+    capCase(value) {
+      return capitalCase(value)
+    },
     getNextId() {
       /***Compute hightest id from all list and add one. */
       if (!this.all) {
@@ -196,7 +233,9 @@ export default {
       if (!selectedItem) return ''
       if (!item) return ''
 
-      return selectedItem[item.fieldName]
+      //return selectedItem[item.fieldName]
+      const v = selectedItem[item.fieldName]
+      return `Array: [${v.length}]`
     },
     computeArrayId(item, selectedItem) {
       return (selectedItem ? selectedItem.id : 'noId') + item.fieldName
@@ -232,9 +271,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    title: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
+      showSearch: true,
       search: null,
       selectedItem: null,
       selectedId: null,
