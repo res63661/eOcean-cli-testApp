@@ -41,7 +41,7 @@ export const state = () => ({
               id: 1,
               who: 'Kurt',
               what: 'get Rich access',
-              dueBy: '2020-12-15T19:03',
+              dueBy: '2020-12-15',
             },
           ],
         },
@@ -58,9 +58,9 @@ export const state = () => ({
       meetings: [
         {
           id: 1,
-          dateOfMeeting: '1/5/2021',
+          dateOfMeeting: '2021-01-05',
           actionItems: [
-            { id: 1, who: 'Rich', what: 'build an app', dueBy: '3/5/2021' },
+            { id: 1, who: 'Rich', what: 'build an app', dueBy: '2021-03-03' },
           ],
         },
       ],
@@ -76,7 +76,7 @@ export const state = () => ({
       meetings: [
         {
           id: 1,
-          dateOfMeeting: '1/5/2021',
+          dateOfMeeting: '2021-05-05',
           actionItems: [],
         },
       ],
@@ -92,6 +92,9 @@ export const getters = {
 }
 
 export const actions = {
+  delete: (ctx, value) => {
+    ctx.commit('delete', value)
+  },
   update(ctx, updateInfo) {
     // // const updateLevel0 = (ctx, data) => {
     // //   //FInd data in all by id then update.
@@ -122,6 +125,7 @@ export const actions = {
 }
 
 export const mutations = {
+  delete: (state, value) => (state.delete = value),
   schemaDisplayDefinition: (state, value) =>
     (state.schemaDisplayDefinition = value),
   update(state, updateInfo) {
@@ -256,13 +260,13 @@ export const mutations = {
               case 'id':
                 break //Skip id's
               case 'label':
-                newValue = 'default label value'
+                newValue = ''
                 break
               case 'text-field':
-                newValue = 'default text value'
+                newValue = ''
                 break
               case 'date':
-                newValue = DateTime.now().toISO()
+                newValue = new Date().toISOString().substr(0, 10)
                 break
               default:
                 newValue = null

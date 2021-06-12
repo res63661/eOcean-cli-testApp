@@ -65,143 +65,156 @@
                     >
                       {{ formatCell(value) }}
                     </template>
+
+                    <template v-slot:item.actions="{ item }">
+                      <v-icon small class="mr-2"> mdi-pencil </v-icon>
+                      <v-icon small> mdi-delete @click="doDelete(item)"</v-icon>
+                    </template>
                   </v-data-table>
                 </v-col>
               </v-row>
             </v-container>
           </div>
-
-          <div class="selectedItem">
-            <v-container>
-              <v-row
-                v-if="
-                  !schemaDisplayDefinition ||
-                  schemaDisplayDefinition.length == 0
-                "
-                justify="center"
-                class="text-center"
-                ><v-col
-                  ><span class="warning--text text-h5"
-                    >Missing schemaDisplayDefinition</span
-                  ></v-col
-                ></v-row
-              >
-              <v-row
-                v-else
-                v-for="item in schemaDisplayDefinition"
-                :key="item.fieldName"
-              >
-                <v-col>
-                  <v-row align="center">
-                    <v-col> {{ item.fieldName }} </v-col>
-                    <v-col
-                      v-if="
-                        selectedItem &&
-                        !Array.isArray(selectedItem[item.fieldName])
-                      "
-                    >
-                      <!-- TEXT TYPE -->
-                      <v-text-field
-                        v-if="selectedItem && item.type == 'text-field'"
-                        :value="selectedItem[item.fieldName]"
-                        @input="updateItem(item, selectedItem.id, $event)"
-                        label="Regular"
-                        clearable
-                      ></v-text-field>
-
-                      <!-- DATE TYPE -->
-                      <v-menu
-                        v-if="selectedItem && item.type == 'date'"
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="auto"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="selectedItem[item.fieldName]"
-                            label="Picker without buttons"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
-                          :value="selectedItem[item.fieldName]"
-                          @change="updateItem(item, selectedItem.id, $event)"
-                          @input="menu2 = false"
-                        ></v-date-picker>
-                      </v-menu>
-
-                      <!-- DEFAULT TYPE -->
-                      <v-text-field
-                        v-else
-                        :value="selectedItem[item.fieldName]"
-                        @input="updateItem(item, selectedItem.id, $event)"
-                        label="Regular"
-                        clearable
-                      ></v-text-field>
-                    </v-col>
-                    <v-col v-else>
-                      <v-row align="center">
-                        <v-col>
-                          {{ formatArrayCellDescription(selectedItem, item) }}
-                        </v-col>
-                        <v-col>
-                          <v-switch
-                            v-model="
-                              arrayEditToggle[
-                                computeArrayId(item, selectedItem)
-                              ]
-                            "
-                            >Edit</v-switch
-                          >
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-
-                  <v-expand-transition>
-                    <v-row
-                      v-if="
-                        selectedItem &&
-                        Array.isArray(selectedItem[item.fieldName]) &&
-                        arrayEditToggle[computeArrayId(item, selectedItem)]
-                      "
-                    >
+          <v-expand-transition>
+            <div class="selectedItem" v-if="selectedItem">
+              <v-container>
+                <v-row
+                  no-gutters
+                  v-if="
+                    !schemaDisplayDefinition ||
+                    schemaDisplayDefinition.length == 0
+                  "
+                  justify="center"
+                  class="text-center"
+                  ><v-col
+                    ><span class="warning--text text-h5"
+                      >Missing schemaDisplayDefinition</span
+                    ></v-col
+                  ></v-row
+                >
+                <v-row
+                  class="mx-2"
+                  no-gutters
+                  v-else
+                  v-for="item in schemaDisplayDefinition"
+                  :key="item.fieldName"
+                >
+                  <v-col>
+                    <v-row align="center" no-gutters>
+                      <v-col> {{ capCase(item.fieldName) }} </v-col>
                       <v-col
-                        class="
-                          tile
-                          ma-2
-                          arrayEditorSurround
-                          rounded
-                          elevation-3
-                          grey
-                          lighten-2
+                        v-if="
+                          selectedItem &&
+                          !Array.isArray(selectedItem[item.fieldName])
                         "
-                        color="arrayEditorSurround"
                       >
-                        <ArrayEditor
-                          v-if="selectedItem"
-                          :schemaDisplayDefinition="item.childDisplaySchema"
-                          :all="
-                            selectedItem ? selectedItem[item.fieldName] : null
-                          "
-                          :allSubtreeAddress="
-                            computeSelectedSubtree(selectedItem, item.fieldName)
-                          "
-                          :title="item ? item.fieldName : ''"
-                        ></ArrayEditor>
+                        <!-- TEXT TYPE -->
+                        <v-text-field
+                          v-if="selectedItem && item.type == 'text-field'"
+                          :value="selectedItem[item.fieldName]"
+                          @input="updateItem(item, selectedItem.id, $event)"
+                          label="Regular"
+                          clearable
+                        ></v-text-field>
+
+                        <!-- DATE TYPE -->
+                        <v-menu
+                          v-else-if="selectedItem && item.type == 'date'"
+                          v-model="menu2"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-model="selectedItem[item.fieldName]"
+                              label="Picker without buttons"
+                              prepend-icon="mdi-calendar"
+                              readonly
+                              v-bind="attrs"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            :value="selectedItem[item.fieldName]"
+                            @change="updateItem(item, selectedItem.id, $event)"
+                            @input="menu2 = false"
+                          ></v-date-picker>
+                        </v-menu>
+
+                        <!-- DEFAULT TYPE -->
+                        <v-text-field
+                          v-else
+                          :value="selectedItem[item.fieldName]"
+                          @input="updateItem(item, selectedItem.id, $event)"
+                          label="Regular"
+                          clearable
+                        ></v-text-field>
+                      </v-col>
+                      <v-col v-else>
+                        <v-row align="center" no-gutters>
+                          <v-col>
+                            {{ formatArrayCellDescription(selectedItem, item) }}
+                          </v-col>
+                          <v-col>
+                            <v-switch
+                              v-model="
+                                arrayEditToggle[
+                                  computeArrayId(item, selectedItem)
+                                ]
+                              "
+                              >Edit</v-switch
+                            >
+                          </v-col>
+                        </v-row>
                       </v-col>
                     </v-row>
-                  </v-expand-transition>
-                </v-col>
-              </v-row>
-            </v-container>
-          </div>
+
+                    <v-expand-transition>
+                      <v-row
+                        no-gutters
+                        v-if="
+                          selectedItem &&
+                          Array.isArray(selectedItem[item.fieldName]) &&
+                          arrayEditToggle[computeArrayId(item, selectedItem)]
+                        "
+                      >
+                        <v-col
+                          class="
+                            tile
+                            ma-2
+                            arrayEditorSurround
+                            rounded
+                            elevation-3
+                            grey
+                            lighten-2
+                          "
+                          color="arrayEditorSurround"
+                        >
+                          <ArrayEditor
+                            v-if="selectedItem"
+                            :schemaDisplayDefinition="item.childDisplaySchema"
+                            :all="
+                              selectedItem ? selectedItem[item.fieldName] : null
+                            "
+                            :allSubtreeAddress="
+                              computeSelectedSubtree(
+                                selectedItem,
+                                item.fieldName
+                              )
+                            "
+                            :title="item ? item.fieldName : ''"
+                          ></ArrayEditor>
+                        </v-col>
+                      </v-row>
+                    </v-expand-transition>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </div>
+          </v-expand-transition>
         </v-card>
       </v-col>
     </v-row>
@@ -232,7 +245,14 @@ export default {
         /**Loop all values in all getting distinct list of object keys as the headers array */
         //For now just use 1st item.
 
-        return Object.keys(all[0]).map((key) => ({ text: key, value: key }))
+        const fields = Object.keys(all[0]).map((key) => ({
+          text: capitalCase(key),
+          value: key,
+        }))
+        return [
+          ...fields,
+          { text: 'Actions', value: 'actions', sortable: false },
+        ]
       }
 
       this.computedHeaders = computeAllHeaders(this.all)
@@ -240,6 +260,9 @@ export default {
     },
   },
   methods: {
+    doDelete(item) {
+      this.$store.dispatch('SMeetingSeries/delete')
+    },
     capCase(value) {
       return capitalCase(value)
     },
@@ -289,6 +312,10 @@ export default {
       }
 
       return value
+
+      // // const retval = value ? capitalCase(value.toString()) : value
+      // // console.log('Header: ', retval)
+      // // return retval
     },
     rowClick: function (item, row) {
       row.select(true)
