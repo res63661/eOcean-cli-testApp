@@ -17,7 +17,10 @@
  */
 
 import displayDef from '@/store/display-schemas/SMeetingSeries.json'
+import axios from 'axios'
 import { DateTime } from 'luxon'
+
+const baseUrl = 'http://localhost:9001'
 
 export const state = () => ({
   schemaDisplayDefinition: displayDef,
@@ -92,6 +95,33 @@ export const getters = {
 }
 
 export const actions = {
+  save: (ctx, value) => {
+    //Filter into updates and new's.
+    const toUpdate = ctx.state.all.filter((o) => o._id)
+    const toNew = ctx.state.all.filter((o) => !o._id)
+
+    const postNew = (toNew) => {
+      //Save to api.
+      const url = `${baseUrl}/meetingSeries`
+      toNew.map((newValue) => {
+        axios
+          .post(url, newValue)
+          .then((response) => {
+            console.log('Save response: ', JSON.stringify(response))
+
+            //Update the source record in all with the new value.
+            newValue._id = response.data[0]._id
+            //ctx.state.all.find(f=>f.id = newValue.id)
+          })
+          .catch((err) => {
+            console.log('Error on save: ', JSON.stringify(err))
+          })
+      })
+    }
+
+    //update(toUpdate)
+    postNew(toNew)
+  },
   delete: (ctx, value) => {
     ctx.commit('delete', value)
   },
