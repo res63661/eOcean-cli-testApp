@@ -100,8 +100,45 @@
                         !Array.isArray(selectedItem[item.fieldName])
                       "
                     >
+                      <!-- TEXT TYPE -->
                       <v-text-field
-                        v-if="selectedItem"
+                        v-if="selectedItem && item.type == 'text-field'"
+                        :value="selectedItem[item.fieldName]"
+                        @input="updateItem(item, selectedItem.id, $event)"
+                        label="Regular"
+                        clearable
+                      ></v-text-field>
+
+                      <!-- DATE TYPE -->
+                      <v-menu
+                        v-if="selectedItem && item.type == 'date'"
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="selectedItem[item.fieldName]"
+                            label="Picker without buttons"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          :value="selectedItem[item.fieldName]"
+                          @change="updateItem(item, selectedItem.id, $event)"
+                          @input="menu2 = false"
+                        ></v-date-picker>
+                      </v-menu>
+
+                      <!-- DEFAULT TYPE -->
+                      <v-text-field
+                        v-else
                         :value="selectedItem[item.fieldName]"
                         @input="updateItem(item, selectedItem.id, $event)"
                         label="Regular"
@@ -142,6 +179,8 @@
                           arrayEditorSurround
                           rounded
                           elevation-3
+                          grey
+                          lighten-2
                         "
                         color="arrayEditorSurround"
                       >
@@ -278,6 +317,7 @@ export default {
   },
   data() {
     return {
+      menu2: false,
       showSearch: true,
       search: null,
       selectedItem: null,

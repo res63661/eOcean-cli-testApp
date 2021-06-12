@@ -35,13 +35,13 @@ export const state = () => ({
       meetings: [
         {
           id: 1,
-          dateOfMeeting: '1/1/2021',
+          dateOfMeeting: '2020-02-20',
           actionItems: [
             {
               id: 1,
               who: 'Kurt',
-              what: 'get Rich accesssss',
-              dueBy: '5/5/2021',
+              what: 'get Rich access',
+              dueBy: '2020-12-15T19:03',
             },
           ],
         },

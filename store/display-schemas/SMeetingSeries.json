@@ -7,7 +7,15 @@
     "label": "Frequency",
     "ddlList": ["Every Weekday", "Every Day", "Custom"]
   },
-  { "fieldName": "required", "type": "text-field" },
+  {
+    "fieldName": "required",
+    "type": "array",
+    "childDisplaySchema": [
+      { "fieldName": "id", "type": "id", "label": "id" },
+      { "fieldName": "email", "type": "email", "label": "id" },
+      { "fieldName": "name", "ype": "text-field", "label": "id" }
+    ]
+  },
   {
     "fieldName": "meetings",
     "type": "text-field",
