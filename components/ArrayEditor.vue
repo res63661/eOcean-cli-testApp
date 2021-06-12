@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card :light="light ? light : dark">
+        <v-card>
           <v-card v-if="$store.getters['SSys/showDevControls']">
             {{ $data }}
             <br />
@@ -150,9 +150,19 @@
                       "
                     >
                       <v-col class="tile blue ma-2 rounded elevation-12">
-                        <ArrayEditor
+                        <!-- <ArrayEditor
                           v-if="selectedItem"
                           :value="selectedItem[item.fieldName]"
+                          :schemaDisplayDefinition="item.childDisplaySchema"
+                          :all="
+                            selectedItem ? selectedItem[item.fieldName] : null
+                          "
+                          :allSubtreeAddress="
+                            computeSelectedSubtree(selectedItem, item.fieldName)
+                          "
+                        ></ArrayEditor> -->
+                        <ArrayEditor
+                          v-if="selectedItem"
                           :schemaDisplayDefinition="item.childDisplaySchema"
                           :all="
                             selectedItem ? selectedItem[item.fieldName] : null
@@ -292,6 +302,8 @@ export default {
       //return selectedItem ? selectedItem.id : 0
     },
     formatCell(value) {
+      if (!value) return null
+
       console.log(value)
       if (Array.isArray(value)) {
         return `Array: length(${value.length})`
@@ -317,7 +329,7 @@ export default {
     /**Use this to track where in the all subtree we are. */
     allSubtreeAddress: {
       type: Array,
-      default: [],
+      default: () => [],
     },
   },
   data() {

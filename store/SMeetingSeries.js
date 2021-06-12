@@ -121,14 +121,18 @@ export const mutations = {
     } = updateInfo
     let childNode
 
-    //If no subtree address then add new to all and return
-    if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
+    // // //If no subtree address then add new to all and return
+    // // if (!subtreeAddress || subtreeAddress.length == 0) state.all.push({})
 
     //Else, walk subtree addresses until exhausted then add new.
     //Get the root value and apply to first node.
-    childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
-      subtreeAddress[0].fieldName
-    ]
+    if (subtreeAddress && subtreeAddress.length > 0) {
+      childNode = state.all.find((obj) => obj.id === subtreeAddress[0].id)[
+        subtreeAddress[0].fieldName
+      ]
+    } else {
+      childNode = state.all
+    }
 
     //Iterate down through children if applicable
     for (let n = 1; n < subtreeAddress.length; n++) {
