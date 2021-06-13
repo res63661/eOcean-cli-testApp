@@ -1,95 +1,19 @@
 {
-  "data": [
-    {
-      "all": [
-        {
-          "id": 1,
-          "meetingName": "System X Scrums",
-          "frequency": "every weekday",
-          "required": [
-            { "id": 3, "email": "kcarlson@rascrane.com", "name": "Kurt" },
-            { "id": 4, "email": "richard@eoceandata.com", "name": "Richard" }
-          ],
-          "meetings": [
-            {
-              "id": 1,
-              "dateOfMeeting": "2020-02-20",
-              "actionItems": [
-                {
-                  "id": 1,
-                  "who": "Kurt",
-                  "what": "get Rich access",
-                  "dueBy": "2020-12-15"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "meetingName": "Weeklyerx",
-          "frequency": "every Tuesday",
-          "required": [
-            {
-              "id": 1,
-              "email": "jsmith@estringsoftware.com",
-              "name": "John Smith"
-            },
-            {
-              "id": 2,
-              "email": "richard@eoceandata.com",
-              "name": "Richard Strickland"
-            }
-          ],
-          "meetings": [
-            {
-              "id": 1,
-              "dateOfMeeting": "2021-01-05",
-              "actionItems": [
-                {
-                  "id": 1,
-                  "who": "Rich",
-                  "what": "build an app",
-                  "dueBy": "2021-03-03"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "meetingName": "Weeklyxxx",
-          "frequency": "every Tuesdayxxxx",
-          "required": [
-            {
-              "id": 1,
-              "email": "abbay@estringsoftware.com",
-              "name": "John Smitty"
-            },
-            {
-              "id": 2,
-              "email": "busoni@eoceandata.com",
-              "name": "Richard Smith"
-            }
-          ],
-          "meetings": [
-            { "id": 1, "dateOfMeeting": "2021-05-05", "actionItems": [] }
-          ]
-        }
-      ],
-      "_id": "60c52955056458525c19c9ab"
-    }
-  ],
-  "status": 201,
-  "statusText": "Created",
+  "data": {
+    "id": "60c53e9c118fcb3d90d02ecf",
+    "createdAt": "2021-06-12T23:09:49.582Z",
+    "updatedAt": "2021-06-12T23:09:49.582Z"
+  },
+  "status": 200,
+  "statusText": "OK",
   "headers": {
-    "content-length": "997",
+    "content-length": "111",
     "content-type": "application/json; charset=utf-8"
   },
   "config": {
-    "url": "http://localhost:9001/meetingSeries",
-    "method": "post",
-    "data": "{\"all\":[{\"id\":1,\"meetingName\":\"System X Scrums\",\"frequency\":\"every weekday\",\"required\":[{\"id\":3,\"email\":\"kcarlson@rascrane.com\",\"name\":\"Kurt\"},{\"id\":4,\"email\":\"richard@eoceandata.com\",\"name\":\"Richard\"}],\"meetings\":[{\"id\":1,\"dateOfMeeting\":\"2020-02-20\",\"actionItems\":[{\"id\":1,\"who\":\"Kurt\",\"what\":\"get Rich access\",\"dueBy\":\"2020-12-15\"}]}]},{\"id\":2,\"meetingName\":\"Weeklyerx\",\"frequency\":\"every Tuesday\",\"required\":[{\"id\":1,\"email\":\"jsmith@estringsoftware.com\",\"name\":\"John Smith\"},{\"id\":2,\"email\":\"richard@eoceandata.com\",\"name\":\"Richard Strickland\"}],\"meetings\":[{\"id\":1,\"dateOfMeeting\":\"2021-01-05\",\"actionItems\":[{\"id\":1,\"who\":\"Rich\",\"what\":\"build an app\",\"dueBy\":\"2021-03-03\"}]}]},{\"id\":3,\"meetingName\":\"Weeklyxxx\",\"frequency\":\"every Tuesdayxxxx\",\"required\":[{\"id\":1,\"email\":\"abbay@estringsoftware.com\",\"name\":\"John Smitty\"},{\"id\":2,\"email\":\"busoni@eoceandata.com\",\"name\":\"Richard Smith\"}],\"meetings\":[{\"id\":1,\"dateOfMeeting\":\"2021-05-05\",\"actionItems\":[]}]}]}",
+    "url": "http://localhost:9001/meetingSeries/60c53e9c118fcb3d90d02ecf",
+    "method": "put",
+    "data": "{\"id\":1,\"meetingName\":\"System X Scrumza\",\"frequency\":\"every weekday\",\"required\":[{\"id\":3,\"email\":\"kcarlson@rascrane.com\",\"name\":\"Kurt\"},{\"id\":4,\"email\":\"richard@eoceandata.com\",\"name\":\"Richard\"}],\"meetings\":[{\"id\":1,\"dateOfMeeting\":\"2020-02-20\",\"actionItems\":[{\"id\":1,\"who\":\"Kurt\",\"what\":\"get Rich access\",\"dueBy\":\"2020-12-15\"}]}],\"_id\":\"60c53e9c118fcb3d90d02ecf\"}",
     "headers": {
       "Accept": "application/json, text/plain, */*",
       "Content-Type": "application/json;charset=utf-8"

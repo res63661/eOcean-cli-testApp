@@ -119,8 +119,50 @@ export const actions = {
       })
     }
 
-    //update(toUpdate)
+    const postUpdated = (toUpdate) => {
+      //Save to api.
+      const allPromises = []
+      toUpdate.map((updateValue) => {
+        const url = `${baseUrl}/meetingSeries/${updateValue._id}`
+        const config = {
+          headers: {
+            'Content-Type':
+              'application/json' /**MUST HAVE THIS FOR BODY.PARSER TO WORK ON EXPRESS SIDE */,
+          },
+        }
+        allPromises.push(
+          axios
+            .put(url, updateValue, config)
+            .then((response) => {
+              console.log('Save response: ', JSON.stringify(response))
+
+              //Update the source record in all with the new value.
+              // // ctx.commit('commitUpdateRow', {
+              // //   updateValue,
+              // //   updateResponse: response.data[0],
+              // // })
+              return {
+                updateValue,
+                updateResponse: JSON.parse(response.config.data),
+              }
+            })
+            .catch((err) => {
+              console.log('Error on save: ', JSON.stringify(err))
+            })
+        )
+      })
+
+      //Await all promises then update the rows.
+      Promise.all(allPromises).then((values) => {
+        //For each result, update local data.
+        values.map((retVal) => {
+          ctx.commit('commitUpdateRow', retVal)
+        })
+      })
+    }
+
     postNew(toNew)
+    postUpdated(toUpdate)
   },
   delete: (ctx, value) => {
     ctx.commit('delete', value)
@@ -155,6 +197,13 @@ export const actions = {
 }
 
 export const mutations = {
+  commitUpdateRow: (state, value) => {
+    state.all.splice(
+      state.all.indexOf((f) => f.id == value.updateValue.id),
+      1,
+      value.updateResponse
+    )
+  },
   delete: (state, value) => (state.delete = value),
   schemaDisplayDefinition: (state, value) =>
     (state.schemaDisplayDefinition = value),
